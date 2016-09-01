@@ -1,30 +1,10 @@
 http://www.todavianose.com/conectarse-a-mysql-con-python/
 
+http://web.ontuts.com/tutoriales/mini-aplicaciones-web-con-python-y-juno-parte-i/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-alumnos = ["ana", "luis", "pedro", "marta", "narea", "pablo"]
-print([x[0].upper() for x in alumnos if x[-1] == 'a'])
-
-print([x for x in alumnos if x[-1] != 'a'])
-
-cua = lambda x: x**2
-print(list(map(lambda x: x**2 ,range(10))))
+http://docs.python.org/2/howto/webservers.html
+https://www.djangoproject.com/
+https://django.2scoops.org/
+http://www.djangobook.com/en/2.0/index.html (desactualizado)
+http://www.tangowithdjango.com/
+https://code.djangoproject.com/wiki/DjangoResources
