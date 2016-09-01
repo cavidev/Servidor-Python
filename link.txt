@@ -1,0 +1,30 @@
+http://www.todavianose.com/conectarse-a-mysql-con-python/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+alumnos = ["ana", "luis", "pedro", "marta", "narea", "pablo"]
+print([x[0].upper() for x in alumnos if x[-1] == 'a'])
+
+print([x for x in alumnos if x[-1] != 'a'])
+
+cua = lambda x: x**2
+print(list(map(lambda x: x**2 ,range(10))))
