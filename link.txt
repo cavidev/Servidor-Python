@@ -8,3 +8,6 @@ https://django.2scoops.org/
 http://www.djangobook.com/en/2.0/index.html (desactualizado)
 http://www.tangowithdjango.com/
 https://code.djangoproject.com/wiki/DjangoResources
+
+tutorial flask:
+http://flask.pocoo.org/docs/0.11/tutorial/introduction/
