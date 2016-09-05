@@ -19,6 +19,11 @@ cursor = conexion_mysql.cursor()
 #Ejecutando una consulta de la base DB
 cursor.execute("select * from city")
 
+def listaAnimales():
+    global cursor
+    cursor.execute("Select * from animales")
+    return
+
 #Recorre la consulta hecha, los campos recibidos se transforma en lo que son ejemplo un int, viene aka como un int.
 for (Campo1, Campo2, Campo3,Campo4, Campo5) in cursor:
     print("Campo1: ", Campo1, ", Campo2: " + Campo2 + ", Campo3: " + Campo3 + ",Campo4: " + Campo4 + ",Campo5: ",Campo5)
