@@ -7,12 +7,6 @@
                 <div class="panel-heading">
                     <div class="panel-title">Usuarios</div>
                 </div>
-                {% if error $('#loginalert').show()%}
-                <div id="loginalert" style="display:none" class="alert alert-danger">
-                    <p>Error:</p>
-                    <span></span>
-                </div>
-                {% endif %}
                 <div style="padding-top:30px" class="panel-body">
                     <div style="display:none" id="login-alert" class="alert alert-danger col-sm-12"></div>
                     <form action="{{ url_for('login') }}" method="POST" id="loginform" class="form-horizontal" role="form">

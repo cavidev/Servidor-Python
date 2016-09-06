@@ -77,6 +77,7 @@ Insertar(Medicamento,"Cura para el sida","No hay","---")
 InsertarUsuario("Blanco707","gb","EstebanB","Admin","6asd6das6das6das6d6s8das8da7sdas5qeadhascbjvas")
 InsertarDosis(1,"Perro","Cura para el sida","Sida",10,10)
 InsertarPrescripcion(10,"Blanco707","Perro","Sida",10,1)
+
 for i in listaObjetos:
     if (i.getClase() == "Animal" or i.getClase() == "Medicamento" or i.getClase() == "Enfermedad"):
         print(i.nombre + " " + i.descripcion + " " + i.foto)
