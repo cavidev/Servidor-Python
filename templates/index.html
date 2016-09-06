@@ -1,35 +1,27 @@
-<!DOCTYPE html>
-<head>
-	<meta charset="UTF-8">
-	<title>Python WEB, usando lambda</title>
-</head>
-    <body>
-        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
-        <script type="text/javascript" src="../static/config.js"></script>
-        <link rel="stylesheet" type="text/css" href="{{url_for('static',filename= 'estilos.css')}}">
-        <!--Se puede usar esta forma: href="../static/estilos.css"-->
-
-        <h1>Enter some text</h1>
-        <h2>(it will be converted to uppercase)</h2>
-        <form action="." method="POST">
-            <input type="text" name="text">
-            <input type="submit" name="my-form" value="Send">
-        </form>
+{% extends "layout.html" %}
+{% block body %}
+<div class="container">
+    <h1>Veterinaria NOOP</h1>
+    <h2>(it will be converted to uppercase)</h2>
+    <form action="." method="POST">
+        <input type="text" name="text">
+        <input type="submit" name="my-form" value="Send">
+    </form>
 
 
-        <form action="." method="POST">
-            <input type="text" name="texto2">
-            <label id="inprimir">tiene que cambiar</label>
-            <input type="submit" name="my-form" value="Prueba">
-        </form>
+    <form action="." method="POST">
+        <input type="text" name="texto2">
+        <label id="inprimir">tiene que cambiar</label>
+        <input type="submit" name="my-form" value="Prueba">
+    </form>
 
-        <h1>jQuery Example</h1>
-        <p>
-            <input type="text" size="5" name="a"> +
-            <input type="text" size="5" name="b"> =
+    <h1>jQuery Example</h1>
+    <p>
+        <input type="text" size="5" name="a"> +
+        <input type="text" size="5" name="b"> =
 
-            <span id="result">?</span>
-        </p>
-            <a href=# id="calculate">calculate server side</a>
-    </body>
-</html>
+        <span id="result">?</span>
+    </p>
+        <a href=# id="calculate">calculate server side</a>
+</div>
+{% endblock %}
