@@ -11,3 +11,9 @@ https://code.djangoproject.com/wiki/DjangoResources
 
 tutorial flask:
 http://flask.pocoo.org/docs/0.11/tutorial/introduction/
+
+info:
+http://opentechschool.github.io/python-flask/core/form-submission.html
+https://realpython.com/blog/python/flask-by-example-part-3-text-processing-with-requests-beautifulsoup-nltk/
+https://www.youtube.com/watch?v=27Fjrlx4s-o
+https://www.youtube.com/watch?v=Lv1fv-HmkQo
