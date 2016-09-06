@@ -11,6 +11,19 @@ app = Flask(__name__)  # Instancia para llamar a los routers.
 def index():
     return render_template("index.html")
 
+@app.route('/login', methods=['GET','POST'])
+def login():
+    nombreUsuario = request.form['nombreUsuario']
+    contrasena = request.form['contrasena']
+    usuario = obtenerUsuarioManager(nombreUsuario, contrasena)
+    if usuario == "error":
+        return render_template("index.html", error="Datos incorrectos")
+    elif(usuario.getPermiso() == "admin"):
+            return render_template("usuarioAdmin/usuarioAdmi.html", usuario=usuario)
+    elif(usuario.getPermiso() == "normal"):
+        return render_template("usuarioAdmi.html", usuario=usuario)
+
+
 
 @app.route("/nombre")
 @app.route("/nombre/<name>")  # Toma la url + una variable y la devuelve al html designado.
