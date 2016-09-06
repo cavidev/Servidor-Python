@@ -1,6 +1,5 @@
 
-from DTO import Animal,Enfermedad,Medicamento,Usuario,Dosis,Prescripcion
-
+from DTO import *
 listaObjetos = []
 
 def Insertar(nombreTabla,nombre,descripcion,foto):
@@ -85,3 +84,4 @@ for i in listaObjetos:
         print(i.id,i.animal,i.medicamento,i.enfermedad)
     else:
         print(i.id,i.idDosis)
+
