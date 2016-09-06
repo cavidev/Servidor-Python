@@ -1,3 +1,5 @@
+
+
 class Usuario:
     def __init__(self):
         self.login = ""
@@ -36,6 +38,9 @@ class Usuario:
     def setFoto(self, foto):
         self.foto = foto
 
+    def getClase(self):
+        return "Usuario"
+
 class Medicamento:
     def __init__(self):
         self.nombre = ""
@@ -59,6 +64,9 @@ class Medicamento:
 
     def setFoto(self, foto):
         self.foto = foto
+
+    def getClase(self):
+        return "Medicamento"
 
 class Animal:
     def __init__(self):
@@ -84,6 +92,9 @@ class Animal:
     def setFoto(self, foto):
         self.foto = foto
 
+    def getClase(self):
+        return "Animal"
+
 class Enfermedad:
     def __init__(self):
         self.nombre = ""
@@ -107,6 +118,9 @@ class Enfermedad:
 
     def setFoto(self, foto):
         self.foto = foto
+
+    def getClase(self):
+        return "Enfermedad"
 
 class Dosis:
     def __init__(self):
@@ -153,6 +167,9 @@ class Dosis:
     def setDosis(self, dosis):
         self.dosis = dosis
 
+    def getClase(self):
+        return "Dosis"
+
 class Prescripcion:
     def __init__(self):
         self.id = 0
@@ -198,3 +215,5 @@ class Prescripcion:
     def setDosis(self, dosis):
         self.idDosis = dosis
 
+    def getClase(self):
+        return "Prescripcion"
