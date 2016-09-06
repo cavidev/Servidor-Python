@@ -1,3 +1,5 @@
+from Conexion import *
+from DTO import *
 
 from DTO import *
 listaObjetos = []
@@ -75,6 +77,7 @@ Insertar(Medicamento,"Cura para el sida","No hay","---")
 InsertarUsuario("Blanco707","gb","EstebanB","Admin","6asd6das6das6das6d6s8das8da7sdas5qeadhascbjvas")
 InsertarDosis(1,"Perro","Cura para el sida","Sida",10,10)
 InsertarPrescripcion(10,"Blanco707","Perro","Sida",10,1)
+
 for i in listaObjetos:
     if (i.getClase() == "Animal" or i.getClase() == "Medicamento" or i.getClase() == "Enfermedad"):
         print(i.nombre + " " + i.descripcion + " " + i.foto)
@@ -85,3 +88,15 @@ for i in listaObjetos:
     else:
         print(i.id,i.idDosis)
 
+def obtenerUsuarioManager(nombre,contrasena):
+    listaUsuario = obtenerUsuarioBD()
+    for usuario in listaUsuario:
+        if(usuario["nombreUsuario"]==nombre and usuario["contrasena"]==contrasena):
+            usu = Usuario()
+            usu.setNombre(usuario["nombre"])
+            usu.setLogin(usuario["nombreUsuario"])
+            usu.setPassword(usuario["contrasena"])
+            usu.setPermiso(usuario["permiso"])
+            usu.setFoto(usuario["foto"])
+            return usu
+    return "error"

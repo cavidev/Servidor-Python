@@ -7,7 +7,7 @@ config_mysql = {
     'user': 'root', #Nombre de usuario
     'password': '2016',#La contraseña de la base de datos
     'host': 'localhost',#127.0.0.1 #El host que va a utilizar.
-    'database': 'world',#Nombre de la base de datos, en este caso es un ejemplo de ella misma
+    'database': 'veterinariaEYC',#Nombre de la base de datos, en este caso es un ejemplo de ella misma
 }
 
 # conectamos al servidor MySql
@@ -17,7 +17,7 @@ conexion_mysql = mysql.connector.connect(**config_mysql)
 cursor = conexion_mysql.cursor()
 
 #Ejecutando una consulta de la base DB
-cursor.execute("select * from city")
+#cursor.execute("select * from city")
 
 def listaAnimales():
     global cursor
@@ -28,6 +28,23 @@ def listaAnimales():
 for (Campo1, Campo2, Campo3,Campo4, Campo5) in cursor:
     print("Campo1: ", Campo1, ", Campo2: " + Campo2 + ", Campo3: " + Campo3 + ",Campo4: " + Campo4 + ",Campo5: ",Campo5)
 
+def obtenerUsuarioBD():
+    conexion_mysql = mysql.connector.connect(**config_mysql)
+    cursor = conexion_mysql.cursor()
+    cursor.execute("Select * from usuario")
+
+
+    listaUsuarios = []
+    for (login, contasena, nombre, permiso, foto) in cursor:
+        diccionario = {"nombreUsuario": login, "contrasena": contasena,"nombre":nombre, "permiso":permiso,"foto":foto}
+        listaUsuarios.append(diccionario)
+    cursor.close()
+    conexion_mysql.close()
+    return listaUsuarios
+
+
+
+    return
 # Cerramos la variable encargada de las consultas y la conexion
 cursor.close()
 conexion_mysql.close()

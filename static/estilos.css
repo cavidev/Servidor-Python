@@ -4,3 +4,7 @@ h1{
 label{
     color: sienna;
 }
+
+body{
+    background-image: url(./img/fondoIndex.jpg);
+}
