@@ -1,7 +1,6 @@
 from Conexion import *
 from DTO import *
 
-from DTO import *
 listaObjetos = []
 
 def Insertar(nombreTabla,nombre,descripcion,foto):
@@ -19,6 +18,7 @@ def InsertarUsuario(login,password,nombre,permiso,foto):
     nuevoObjeto.setPermiso(permiso)
     nuevoObjeto.setFoto(foto)
     listaObjetos.append(nuevoObjeto)
+    print(nombre)
 
 def InsertarDosis(id,animal,medicamento,enfermedad,peso,dosis):
     nuevoObjeto = Dosis()
@@ -100,3 +100,7 @@ def obtenerUsuarioManager(nombre,contrasena):
             usu.setFoto(usuario["foto"])
             return usu
     return "error"
+
+def InsertarUsuarioManager(login,password,nombre,permiso,foto):
+    insertarUsuarioBD(login, password, nombre, permiso, foto)
+    return "Hola..."
