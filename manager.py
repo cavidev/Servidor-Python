@@ -34,7 +34,7 @@ def InsertarDosis(id,animal,medicamento,enfermedad,peso,dosis):
     nuevoObjeto = Dosis()
     nuevoObjeto.setID(id)
     #falta un for para evitar que se repita el id
-    for i in listaObjetos:
+    for i in listaTodos:
         if (i.getClase() == "Animal"):
             if (i.getNombre() == animal):
                 nuevoObjeto.setAnimal(animal)
@@ -57,7 +57,7 @@ def InsertarPrescripcion(id,usuario,animal,enfermedad,peso,idDosis):
     nuevoObjeto = Prescripcion()
     nuevoObjeto.setID(id)
     # falta un for para evitar que se repita el id
-    for i in listaObjetos:
+    for i in listaTodos:
         if (i.getClase() == "Animal"):
             if (i.getNombre() == animal):
                 nuevoObjeto.setAnimal(animal)
