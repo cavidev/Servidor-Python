@@ -15,11 +15,11 @@ def index():
 def login():
     nombreUsuario = request.form['nombreUsuario']
     contrasena = request.form['contrasena']
-    usuario = obtenerUsuarioManager(nombreUsuario, contrasena)
+    usuario = obtenerUsuarioManager(str(nombreUsuario), str(contrasena))
     if usuario == "error":
         return render_template("index.html", error="Datos incorrectos")
     elif(usuario.getPermiso() == "admin"):
-            return render_template("usuarioAdmin/usuarioAdmi.html", usuario=usuario)
+        return render_template("usuarioAdmin/usuarioAdmi.html", usuario=usuario)
     elif(usuario.getPermiso() == "normal"):
         return render_template("usuarioAdmi.html", usuario=usuario)
 
@@ -30,26 +30,17 @@ def login():
 def nombre(name=None):
     return render_template("profile.html", name=name)
 
-
-@app.route("/procesar", methods=['GET','POST'])
-def procesar():
-    apellidoE = request.form['name']
-    return render_template("comprando.html", comida=salude(), persona=persona1, nombreE=apellidoE)
-
-@app.route("/compras", methods=['GET','POST'])  # Pasando objetos. Una lista de productos.
-def compras():
-    apellidoE = request.form['name']
-    print(apellidoE)
-    return render_template("comprando.html", comida=salude(), persona=persona1, nombreE=apellidoE)
-
-
-
-
-
-
-
-
-
+#
+# @app.route("/procesar", methods=['GET','POST'])
+# def procesar():
+#     apellidoE = request.form['name']
+#     return render_template("comprando.html", comida=salude(), persona=persona1, nombreE=apellidoE)
+#
+# @app.route("/compras", methods=['GET','POST'])  # Pasando objetos. Una lista de productos.
+# def compras():
+#     apellidoE = request.form['name']
+#     print(apellidoE)
+#     return render_template("comprando.html", comida=salude(), persona=persona1, nombreE=apellidoE)
 
 
 @app.route('/_add_numbers')
