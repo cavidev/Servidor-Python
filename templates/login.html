@@ -1,7 +1,10 @@
-{% extends "layout.html" %}
+{% extends "layoutLogin.html" %}
 {% block body %}
 <div>
     <div class="container">
+  {% if suceso %}
+    <h5>{{ suceso }}</h5>
+  {% endif %}
         <div id="loginbox" style="margin-top:150px;" class="mainbox col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">
             <div class="panel panel-success" >
                 <div class="panel-heading">

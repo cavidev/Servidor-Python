@@ -4,11 +4,58 @@
     <div style="margin-top:30px;">
         <div class="panel panel-success">
             <div class="panel-heading">
+                {% if usuario %}
                 <div class="panel-title"> Bienvenido: {{usuario.getNombre()}}</div>
                 <div style="float:right; font-size: 85%; position: relative; top:-10px"><a href="/">Salir</a></div>
+                {% endif %}
             </div>
             <div style="padding-top:30px" class="panel-body">
-
+                <div>
+                <div style="float: left; width: 500px" class="well well-sm">
+                    <h3 style="text-align: center;">Agregar</h3>
+                    <form enctype="multipart/form-data" action="{{ url_for('agregar') }}" method="post" class="form-horizontal">
+                    <div class="form-group">
+                        <label type="text" class="col-md-3 control-label">Categoria</label>
+                        <div class="col-md-4">
+                            <select name="categoria" class="form-control">
+                                <option value="Medicamento">Medicamentos</option>
+                                <option value="Animal">Animal</option>
+                                <option value="Enfermedad">Enfermedad</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label type="text" class="col-md-3 control-label">Nombre</label>
+                        <div class="col-md-9">
+                            <input type="text" class="form-control" name="nombre" placeholder="Nombre">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label type="text" class="col-md-3 control-label">Descripción: </label>
+                        <div class="col-md-9">
+                            <input type="text" class="form-control" name="descripcion" placeholder="Descripcion">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label type="text" class="col-md-3 control-label">Foto</label>
+                        <div class="col-md-9">
+                            <input name="foto" type="file" placeholder="Agregar"/>
+                        </div>
+                    </div>
+                    <div class="form-group" style="margin-left: 75px" >
+                      <button type="submit" name="submit" value="agregar" class="btn btn-success">Agregar</button>
+                      <button type="submit" name="submit" value="modificar" class="btn btn-primary">Modificar</button>
+                      <button type="submit" name="submit" value="eliminar" class="btn btn-danger">Eliminar</button>
+                    </div>
+                    </form>
+                </div>
+                <div style="margin-top: 10px; margin-left: 75px;float: left; width: 500px; height: 300px" class="well well-sm">
+                    <h3 style="text-align: center;">Información</h3>
+                    {% if suceso %}
+                    <label style="text-align: center" >{{ suceso }}</label>
+                    {% endif %}
+                </div>
+                </div>
             </div>
         </div>
     </div>
