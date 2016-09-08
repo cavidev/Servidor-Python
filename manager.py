@@ -103,5 +103,3 @@ def obtenerUsuarioManager(login,contrasena):
         if(usuario.getLogin() == login and usuario.getPassword() ==contrasena):
             return usuario
     return "error"
-
-
