@@ -103,7 +103,6 @@ def obtenerUsuarioManager(login,contrasena):
             return usuario
     return "error"
 
-
 def InsertarUsuarioManager1(login,password,nombre,permiso,foto):
     insertarUsuarioBD(login, password, nombre, permiso, foto)
     return "Hola..."
