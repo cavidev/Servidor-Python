@@ -1,5 +1,8 @@
+import base64
+
 from Conexion import *
 from DTO import *
+from flask import request
 
 listaObjetos = []
 listaTodos = []
@@ -9,6 +12,17 @@ listaTodos.extend(listar(Medicamento))
 listaTodos.extend(listarDosis())
 listaTodos.extend(listarPrescripciones())
 listaTodos.extend(obtenerUsuarioBD())
+
+def InsertarManager(nombreTabla,request):
+    print(request.form['nombre'])
+    nuevoObjeto = nombreTabla()
+    nuevoObjeto.setNombre(request.form['nombre'])
+    nuevoObjeto.setDescripcion(request.form['descripcion'])
+    #imagen64 = base64.encodebytes(request.form['foto'].read())
+    #nuevoObjeto.setFoto(imagen64)
+    listaObjetos.append(nuevoObjeto)
+    listaTodos.append(nuevoObjeto)
+    print("Mae instacie el objeto y lo agrege: ")
 
 def Insertar(nombreTabla,nombre,descripcion,foto):
     nuevoObjeto = nombreTabla()
@@ -28,7 +42,6 @@ def InsertarUsuario(login,password,nombre,permiso,foto):
     nuevoObjeto.setFoto(foto)
     listaObjetos.append(nuevoObjeto)
     listaTodos.append(nuevoObjeto)
-
 
 def InsertarDosis(id,animal,medicamento,enfermedad,peso,dosis):
     nuevoObjeto = Dosis()
