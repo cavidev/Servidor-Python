@@ -1,6 +1,8 @@
 
 __author__ = 'Carlos Mario'
 import mysql.connector
+from mysql.connector import MySQLConnection, Error
+
 from DTO import *
 
 # Variable con la configuracion de la conexion
@@ -19,6 +21,8 @@ cursor = conexion_mysql.cursor()
 
 #Ejecutando una consulta de la base DB
 #cursor.execute("select * from city")
+cursor.close()
+conexion_mysql.close()
 
 def listar(nombreTabla):
     conexion_mysql = mysql.connector.connect(**config_mysql)
@@ -93,7 +97,25 @@ def obtenerUsuarioBD():
     return listaUsuarios
 
 
-
 # Cerramos la variable encargada de las consultas y la conexion
-cursor.close()
-conexion_mysql.close()
+#************************************************
+#Esta sirve..¡¡
+
+def insertarUsuarioBD(login, contrasena, nombre, permiso,foto):
+
+    #prepare update query and data
+    query = "INSERT INTO usuario(login, contrasena, nombre, permiso,foto)VALUES(%s,%s,%s,%s,%s)"
+
+    args = (login, contrasena, nombre, permiso,foto)
+
+    try:
+        conexion_mysql = mysql.connector.connect(**config_mysql)
+        cursor = conexion_mysql.cursor()
+        cursor.execute(query, args)
+        conexion_mysql.commit()
+    except Error as e:
+        print(e)
+    finally:
+        cursor.close()
+        conexion_mysql.close()
+

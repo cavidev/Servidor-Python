@@ -1,8 +1,6 @@
 from Conexion import *
 from DTO import *
 
-from DTO import *
-
 listaObjetos = []
 listaTodos = []
 listaTodos.extend(listar(Animal))
@@ -29,6 +27,7 @@ def InsertarUsuario(login,password,nombre,permiso,foto):
     nuevoObjeto.setFoto(foto)
     listaObjetos.append(nuevoObjeto)
     listaTodos.append(nuevoObjeto)
+
 
 def InsertarDosis(id,animal,medicamento,enfermedad,peso,dosis):
     nuevoObjeto = Dosis()
@@ -103,3 +102,7 @@ def obtenerUsuarioManager(login,contrasena):
         if(usuario.getLogin() == login and usuario.getPassword() ==contrasena):
             return usuario
     return "error"
+
+def InsertarUsuarioManager1(login,password,nombre,permiso,foto):
+    insertarUsuarioBD(login, password, nombre, permiso, foto)
+    return "Hola..."
