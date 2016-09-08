@@ -1,12 +1,8 @@
-import base64
 import io
 import os
 import base64
-from flask import Flask,request,render_template,jsonify,\
-    redirect, url_for # Esta siempre va en proyectos de flask
+from flask import Flask,request,render_template,jsonify,redirect, url_for # Esta siempre va en proyectos de flask
 from flask import flash
-from flask import send_from_directory
-from wand.image import Image
 from werkzeug.utils import secure_filename
 from manager import *
 
@@ -40,16 +36,14 @@ def allowed_file(filename):
 @app.route('/register', methods=['GET','POST'])
 def register():
     if 'fotoSubida' not in request.files:
-        flash('No file part')
         return redirect(request.url)
     nombreCompleto = request.form['nombreCompleto']
     usuario = request.form['usuario']
     contrasena = request.form['contrasena']
     permiso = request.form['permiso']
     foto = request.files['fotoSubida'].read()
-    foto1=request.files['fotoSubida']
-    print(foto)
-    print(foto1)
+    foto1 = request.files['fotoSubida']
+
 
     if foto1.filename == '':
          flash('No selected file')
@@ -59,8 +53,12 @@ def register():
          foto1.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
          #InsertarUsuarioManager(usuario, contrasena, nombreCompleto, permiso, foto)
     bytes = bytearray(foto)
-    image = Image.open(io.BytesIO(bytes))
-    return render_template("profile.html", suceso=image)
+    #imagen64 = base64.encodebytes(foto)
+    imagen64 = base64.b64encode(foto)
+    print(imagen64)
+
+    imagen = base64.decodebytes(imagen64)
+    return render_template("profile.html", suceso=imagen64)
 
 # @app.route('/register', methods=['GET','POST'])
 # def register():
@@ -123,6 +121,7 @@ def my_form_post():
     text = request.form['text']
     processed_text = text.upper()
     return processed_text
+
 
 
 # Esto lo hace correr. El debug = true permite que se impriman los errores, si se quita igual funciona
