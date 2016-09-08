@@ -18,6 +18,7 @@ def Insertar(nombreTabla,nombre,descripcion,foto):
     listaObjetos.append(nuevoObjeto)
     listaTodos.append(nuevoObjeto)
 
+
 def InsertarUsuario(login,password,nombre,permiso,foto):
     nuevoObjeto = Usuario()
     nuevoObjeto.setLogin(login)

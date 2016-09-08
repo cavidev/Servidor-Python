@@ -48,6 +48,8 @@ def register():
     permiso = request.form['permiso']
     foto = request.files['fotoSubida'].read()
     foto1=request.files['fotoSubida']
+    print(foto)
+    print(foto1)
 
     if foto1.filename == '':
          flash('No selected file')
@@ -59,8 +61,6 @@ def register():
     bytes = bytearray(foto)
     image = Image.open(io.BytesIO(bytes))
     return render_template("profile.html", suceso=image)
-
-
 
 # @app.route('/register', methods=['GET','POST'])
 # def register():
@@ -97,7 +97,6 @@ def register():
 def nombre(name=None):
     return render_template("profile.html", name=name)
 
-<<<<<<< HEAD
 
 @app.route("/procesar", methods=['GET','POST'])
 def procesar():
