@@ -17,8 +17,9 @@ def InsertarManager(nombreTabla,request):
     nuevoObjeto = nombreTabla()
     nuevoObjeto.setNombre(request.form['nombre'])
     nuevoObjeto.setDescripcion(request.form['descripcion'])
-    #imagen64 = base64.encodebytes(request.form['foto'].read())
-    #nuevoObjeto.setFoto(imagen64)#arreglar lo de la insercion de la imagen..
+
+
+
     listaObjetos.append(nuevoObjeto)
     listaTodos.append(nuevoObjeto)
     print("Mae instacie el objeto y lo agrege: ")
@@ -30,7 +31,6 @@ def Insertar(nombreTabla,nombre,descripcion,foto):
     nuevoObjeto.setFoto(foto)
     listaObjetos.append(nuevoObjeto)
     listaTodos.append(nuevoObjeto)
-
 
 def InsertarUsuario(login,password,nombre,permiso,foto):
     nuevoObjeto = Usuario()
@@ -117,5 +117,4 @@ def obtenerUsuarioManager(login,contrasena):
     return "error"
 
 def InsertarUsuarioManager1(login,password,nombre,permiso,foto):
-    insertarUsuarioBD(login, password, nombre, permiso, foto)
-    return "!!Se inserto en la Base de Datos¡¡"
+    return insertarUsuarioBD(login, password, nombre, permiso, foto)

@@ -21,6 +21,7 @@ cursor = conexion_mysql.cursor()
 
 #Ejecutando una consulta de la base DB
 #cursor.execute("select * from city")
+#Cerramos la variable encargada de las consultas y la conexion
 cursor.close()
 conexion_mysql.close()
 
@@ -79,6 +80,8 @@ def listarPrescripciones():
 for (Campo1, Campo2, Campo3,Campo4, Campo5) in cursor:
     print("Campo1: ", Campo1, ", Campo2: " + Campo2 + ", Campo3: " + Campo3 + ",Campo4: " + Campo4 + ",Campo5: ",Campo5)
 
+
+
 def obtenerUsuarioBD():
     conexion_mysql = mysql.connector.connect(**config_mysql)
     cursor = conexion_mysql.cursor()
@@ -96,26 +99,22 @@ def obtenerUsuarioBD():
     conexion_mysql.close()
     return listaUsuarios
 
-
-# Cerramos la variable encargada de las consultas y la conexion
 #************************************************
-#Esta sirve..¡¡
 
 def insertarUsuarioBD(login, contrasena, nombre, permiso,foto):
-
     #prepare update query and data
-    query = "INSERT INTO usuario(login, contrasena, nombre, permiso,foto)VALUES(%s,%s,%s,%s,%s)"
+    query = "INSERT INTO usuario(login, contrasena, nombre, permiso, foto)VALUES(%s,%s,%s,%s,%s)"
 
     args = (login, contrasena, nombre, permiso,foto)
-
+    error = "¡Exito!"
     try:
         conexion_mysql = mysql.connector.connect(**config_mysql)
         cursor = conexion_mysql.cursor()
         cursor.execute(query, args)
         conexion_mysql.commit()
     except Error as e:
-        print(e)
+        error = e
     finally:
         cursor.close()
         conexion_mysql.close()
-
+    return error

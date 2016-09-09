@@ -3,6 +3,7 @@ from flask import Flask,request,render_template,jsonify,redirect, url_for # Esta
 from flask import make_response
 from werkzeug.utils import secure_filename
 from manager import *
+import base64
 from DTO import *
 
 UPLOAD_FOLDER = 'imagenesUsuario'
@@ -26,7 +27,9 @@ def login():
     if usuario == "error":
         return render_template("login.html", suceso="Datos incorrectos, digitelos de nuevo")
     elif(usuario.getPermiso() == "admin"):
-        return render_template("usuarioAdmin/usuarioAdmi.html", usuario=usuario)
+        resultado = usuario.getFoto().decode('utf8')
+        print(resultado)
+        return render_template("usuarioAdmin/usuarioAdmi.html", usuario=usuario, foto="data:image/jpeg;base64,"+resultado)
     elif(usuario.getPermiso() == "normal"):
         return render_template("usuarioAdmi.html", usuario=usuario)
 
@@ -42,21 +45,16 @@ def register():
     usuario = request.form['usuario']
     contrasena = request.form['contrasena']
     permiso = request.form['permiso']
-    foto1 = request.files['fotoSubida']
-
-    if foto1.filename == '':
-         return redirect(request.url)
-    if foto1 and allowed_file(foto1.filename):
-         filename = secure_filename(foto1.filename)
-         #foto1.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-         #InsertarUsuarioManager(usuario, contrasena, nombreCompleto, permiso, foto)
-
-    valor = base64.b64encode(foto1.getvalue())
-    print(foto1.getvalue())
-    print(valor)
+    foto = request.files['fotoSubida']
+    valor = base64.b64encode(foto.getvalue())
     resultado = valor.decode('utf8')
-    print(resultado)
-    return render_template("profile.html", suceso= "data:image/jpeg;base64,"+resultado)
+    if foto.filename == '':
+         return redirect(request.url)
+    if foto and allowed_file(foto.filename):
+         filename = secure_filename(foto.filename)
+         print(resultado)
+         #print(InsertarUsuarioManager1(usuario, contrasena, nombreCompleto, permiso, resultado))
+    return render_template("profile.html", suceso = "data:image/jpeg;base64,"+resultado)
 
 @app.route('/agregar', methods=['GET','POST'])
 def agregar():
