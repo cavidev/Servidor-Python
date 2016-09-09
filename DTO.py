@@ -6,6 +6,7 @@ class Usuario:
         self.nombre = ""
         self.permiso = ""
         self.foto = ""
+        self.fotoDecodificada = ""
 
     def getLogin(self):
         return self.login
@@ -22,6 +23,9 @@ class Usuario:
     def getFoto(self):
         return self.foto
 
+    def getFotoDecodificada(self):
+        return self.fotoDecodificada
+
     def setLogin(self, login):
         self.login = login
 
@@ -37,6 +41,9 @@ class Usuario:
     def setFoto(self, foto):
         self.foto = foto
 
+    def setFotoDecodificada(self, fotoDecodificada):
+        self.fotoDecodificada = fotoDecodificada
+
     def getClase(self):
         return "Usuario"
 
@@ -45,6 +52,7 @@ class Medicamento:
         self.nombre = ""
         self.descripcion = ""
         self.foto = ""
+        self.fotoDecodificada = ""
 
     def getNombre(self):
         return self.nombre
@@ -55,6 +63,9 @@ class Medicamento:
     def getFoto(self):
         return self.foto
 
+    def getFotoDecodificada(self):
+        return self.fotoDecodificada
+
     def setNombre(self, nombre):
         self.nombre = nombre
 
@@ -63,6 +74,9 @@ class Medicamento:
 
     def setFoto(self, foto):
         self.foto = foto
+
+    def setFotoDecodificada(self,fotoDecodificada):
+        self.fotoDecodificada = fotoDecodificada
 
     def getClase(self):
         return "Medicamento"

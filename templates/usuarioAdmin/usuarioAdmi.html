@@ -10,54 +10,157 @@
                 {% endif %}
             </div>
             <div style="padding-top:30px" class="panel-body">
-                <div style="float: right" >
-                    <img src="{{ foto }}" width="100px" height="100px"/>
-                </div>
                 <div>
-                <div style="float: left; width: 500px" class="well well-sm">
-                    <h3 style="text-align: center;">Agregar</h3>
-                    <form enctype="multipart/form-data" action="{{ url_for('agregar') }}" method="post" class="form-horizontal">
-                    <div class="form-group">
-                        <label type="text" class="col-md-3 control-label">Categoria</label>
-                        <div class="col-md-4">
-                            <select name="categoria" class="form-control">
-                                <option value="Medicamento">Medicamentos</option>
-                                <option value="Animal">Animal</option>
-                                <option value="Enfermedad">Enfermedad</option>
-                            </select>
+                    <div style="float: left;margin-left: 20px; width: 500px" class="well well-sm">
+                        <h3 style="text-align: center;">Agregar</h3>
+                        <form enctype="multipart/form-data" action="{{ url_for('agregar') }}" method="post" class="form-horizontal">
+                        <div class="form-group">
+                            <label type="text" class="col-md-3 control-label">Categoria</label>
+                            <div class="col-md-4">
+                                <select name="categoria" class="form-control">
+                                    <option value="Medicamento">Medicamentos</option>
+                                    <option value="Animal">Animal</option>
+                                    <option value="Enfermedad">Enfermedad</option>
+                                </select>
+                            </div>
                         </div>
-                    </div>
-                    <div class="form-group">
-                        <label type="text" class="col-md-3 control-label">Nombre</label>
-                        <div class="col-md-9">
-                            <input type="text" class="form-control" name="nombre" placeholder="Nombre">
+                        <div class="form-group">
+                            <label type="text" class="col-md-3 control-label">Nombre</label>
+                            <div class="col-md-9">
+                                <input type="text" class="form-control" name="nombre" placeholder="Nombre">
+                            </div>
                         </div>
-                    </div>
-                    <div class="form-group">
-                        <label type="text" class="col-md-3 control-label">Descripción: </label>
-                        <div class="col-md-9">
-                            <input type="text" class="form-control" name="descripcion" placeholder="Descripcion">
+                        <div class="form-group">
+                            <label type="text" class="col-md-3 control-label">Descripción: </label>
+                            <div class="col-md-9">
+                                <input type="text" class="form-control" name="descripcion" placeholder="Descripcion">
+                            </div>
                         </div>
-                    </div>
-                    <div class="form-group">
-                        <label type="text" class="col-md-3 control-label">Foto</label>
-                        <div class="col-md-9">
-                            <input name="foto" type="file" placeholder="Agregar"/>
+                        <div class="form-group">
+                            <label type="text" class="col-md-3 control-label">Foto</label>
+                            <div class="col-md-9">
+                                <input name="foto" type="file" placeholder="Agregar"/>
+                            </div>
                         </div>
+                        <div class="form-group" style="margin-left: 130px" >
+                          <button type="submit" name="submit" value="agregar" class="btn btn-success">Agregar</button>
+                          <button type="submit" name="submit" value="modificar" class="btn btn-primary">Modificar</button>
+                          <button type="submit" name="submit" value="eliminar" class="btn btn-danger">Eliminar</button>
+                        </div>
+                        </form>
                     </div>
-                    <div class="form-group" style="margin-left: 130px" >
-                      <button type="submit" name="submit" value="agregar" class="btn btn-success">Agregar</button>
-                      <button type="submit" name="submit" value="modificar" class="btn btn-primary">Modificar</button>
-                      <button type="submit" name="submit" value="eliminar" class="btn btn-danger">Eliminar</button>
+                    <div style="margin-top: 8px; margin-left: 75px;float: left; width: 500px; height: 300px" class="well well-sm">
+                        <h3 style="text-align: center;">Información</h3>
+                        <div>
+                            <div style="float: right" >
+                                <img src="{{ usuario.getFotoDecodificada() }}" class="img-circle" alt="Cinque Terre" width="100" height="100">
+                            </div>
+                        </div>
+                        {% if suceso %}
+                        <label style="text-align: center" >{{ suceso }}</label>
+                        {% endif %}
                     </div>
-                    </form>
                 </div>
-                <div style="margin-top: 10px; margin-left: 75px;float: left; width: 500px; height: 300px" class="well well-sm">
-                    <h3 style="text-align: center;">Información</h3>
-                    {% if suceso %}
-                    <label style="text-align: center" >{{ suceso }}</label>
-                    {% endif %}
-                </div>
+                <div style="margin-top: 350px">
+                    <div style="float: left;margin-left: 20px">
+                        <div style="width: 500px" class="well well-sm">
+                            <h3 style="text-align: center;">Dosis</h3>
+                            <form enctype="multipart/form-data" action="{{ url_for('dosis') }}" method="post" class="form-horizontal">
+                            <div class="form-group">
+                                <label type="text" class="col-md-3 control-label">ID</label>
+                                <div class="col-md-9">
+                                    <input type="text" class="form-control" name="idDosis" placeholder="Digite un ID">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label type="text" class="col-md-3 control-label">Animal</label>
+                                <div class="col-md-9">
+                                    <input type="text" class="form-control" name="animal" placeholder="Digite el nombre del animal">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label type="text" class="col-md-3 control-label">Medicamento</label>
+                                <div class="col-md-9">
+                                    <input type="text" class="form-control" name="medicamento" placeholder="Digite el medicamento">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label type="text" class="col-md-3 control-label">Enfermedad</label>
+                                <div class="col-md-9">
+                                    <input type="text" class="form-control" name="enfermedad" placeholder="Digite la enfermedad">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label type="text" class="col-md-3 control-label">Rango/peso</label>
+                                <div class="col-md-3">
+                                    <input type="text" class="form-control" name="min" placeholder="min">
+                                </div>
+                                <div class="col-md-3">
+                                    <input type="text" class="form-control" name="max" placeholder="max">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label type="text" class="col-md-3 control-label">Dosis</label>
+                                <div class="col-md-9">
+                                    <input type="text" class="form-control" name="dosis" placeholder="Digite la dosis">
+                                </div>
+                            </div>
+                            <div class="form-group" style="margin-left: 130px" >
+                              <button type="submit" name="submit" value="agregar" class="btn btn-success">Agregar</button>
+                              <button type="submit" name="submit" value="modificar" class="btn btn-primary">Modificar</button>
+                              <button type="submit" name="submit" value="eliminar" class="btn btn-danger">Eliminar</button>
+                            </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div>
+                        <div style="margin-left: 75px;float: left; width: 500px" class="well well-sm">
+                            <h3 style="text-align: center;">Prescripción</h3>
+                            <form enctype="multipart/form-data" action="{{ url_for('prescripcion') }}" method="post" class="form-horizontal">
+                            <div class="form-group">
+                                <label type="text" class="col-md-3 control-label">ID</label>
+                                <div class="col-md-9">
+                                    <input type="text" class="form-control" name="idPrescripcion" placeholder="Digite un ID">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label type="text" class="col-md-3 control-label">Usuario</label>
+                                <div class="col-md-9">
+                                    <input type="text" class="form-control" name="usuario" placeholder="Digite el nombre del usuario">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label type="text" class="col-md-3 control-label">Animal</label>
+                                <div class="col-md-9">
+                                    <input type="text" class="form-control" name="animal">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label type="text" class="col-md-3 control-label">Enfermedad</label>
+                                <div class="col-md-9">
+                                    <input type="text" class="form-control" name="enfermedad" placeholder="Digite la enfermedad">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label type="text" class="col-md-3 control-label">Peso</label>
+                                <div class="col-md-9">
+                                    <input type="text" class="form-control" name="peso" placeholder="Digite el peso">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label type="text" class="col-md-3 control-label">Dosis</label>
+                                <div class="col-md-9">
+                                    <input type="text" class="form-control" name="dosis" placeholder="Digite la dosis">
+                                </div>
+                            </div>
+                            <div class="form-group" style="margin-left: 130px" >
+                              <button type="submit" name="submit" value="agregar" class="btn btn-success">Agregar</button>
+                              <button type="submit" name="submit" value="modificar" class="btn btn-primary">Modificar</button>
+                              <button type="submit" name="submit" value="eliminar" class="btn btn-danger">Eliminar</button>
+                            </div>
+                            </form>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

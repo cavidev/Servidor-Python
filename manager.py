@@ -1,5 +1,4 @@
 import base64
-
 from Conexion import *
 from DTO import *
 from flask import request
@@ -17,12 +16,14 @@ def InsertarManager(nombreTabla,request):
     nuevoObjeto = nombreTabla()
     nuevoObjeto.setNombre(request.form['nombre'])
     nuevoObjeto.setDescripcion(request.form['descripcion'])
-
-
-
+    #Con esto se agrega la foto a la db, la guarda como archivo de bytes, se tiene que decodificar.
+    foto = request.files['foto']
+    valor = base64.b64encode(foto.getvalue())
+    resultado = valor.decode('utf8')
+    nuevoObjeto.setFoto(resultado)
     listaObjetos.append(nuevoObjeto)
     listaTodos.append(nuevoObjeto)
-    print("Mae instacie el objeto y lo agrege: ")
+    return "¡¡Se inserto en la lista (el/la): " + nuevoObjeto.getClase() + "!!"
 
 def Insertar(nombreTabla,nombre,descripcion,foto):
     nuevoObjeto = nombreTabla()

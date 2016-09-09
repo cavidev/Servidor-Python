@@ -27,9 +27,10 @@ def login():
     if usuario == "error":
         return render_template("login.html", suceso="Datos incorrectos, digitelos de nuevo")
     elif(usuario.getPermiso() == "admin"):
-        resultado = usuario.getFoto().decode('utf8')
-        print(resultado)
-        return render_template("usuarioAdmin/usuarioAdmi.html", usuario=usuario, foto="data:image/jpeg;base64,"+resultado)
+        resultado = "data:image/jpeg;base64,"
+        resultado = resultado + usuario.getFoto().decode('utf8')
+        usuarioAdentro.setFotoDecodificada(resultado)
+        return render_template("usuarioAdmin/usuarioAdmi.html", usuario=usuario, foto=usuario.getFotoDecodificada())
     elif(usuario.getPermiso() == "normal"):
         return render_template("usuarioAdmi.html", usuario=usuario)
 
@@ -45,16 +46,15 @@ def register():
     usuario = request.form['usuario']
     contrasena = request.form['contrasena']
     permiso = request.form['permiso']
-    foto = request.files['fotoSubida']
+    foto = request.files['foto']
     valor = base64.b64encode(foto.getvalue())
     resultado = valor.decode('utf8')
     if foto.filename == '':
          return redirect(request.url)
     if foto and allowed_file(foto.filename):
          filename = secure_filename(foto.filename)
-         print(resultado)
-         #print(InsertarUsuarioManager1(usuario, contrasena, nombreCompleto, permiso, resultado))
-    return render_template("profile.html", suceso = "data:image/jpeg;base64,"+resultado)
+         InsertarUsuarioManager1(usuario, contrasena, nombreCompleto, permiso, resultado)
+    return render_template("login.html", suceso="¡¡Se agrego a la lista de espera!!")
 
 @app.route('/agregar', methods=['GET','POST'])
 def agregar():
@@ -62,15 +62,12 @@ def agregar():
     opcion = request.form['submit']
     categoria = request.form['categoria']
     if opcion == "agregar":
-        print("Se metio a agregar")
         if categoria == "Medicamento":
-            print("Se metio a los medicamentos")
-            InsertarManager(Medicamento,request)
+            InsertarManager(Medicamento, request)
         elif categoria == "Animal":
             InsertarManager(Animal, request)
         elif categoria == "Enfermedad":
             InsertarManager(Enfermedad, request)
-        print("Paso hasta aqui")
         return render_template("usuarioAdmin/usuarioAdmi.html", suceso="Se inserto: "+ categoria, usuario=usuarioAdentro)
     elif opcion == "modificar":
         if categoria == "Medicamento":
@@ -79,7 +76,7 @@ def agregar():
             InsertarManager(Animal, request)
         elif categoria == "Enfermedad":
             InsertarManager(Enfermedad, request)
-        return render_template("usuarioAdmin/usuarioAdmi.html", suceso="Se modifico: ")
+        return render_template("usuarioAdmin/usuarioAdmi.html", usuario=usuarioAdentro, suceso="Se modifico: ")
     elif opcion == "eliminar":
         if categoria == "Medicamento":
             InsertarManager(Medicamento, request)
@@ -87,9 +84,22 @@ def agregar():
             InsertarManager(Animal, request)
         elif categoria == "Enfermedad":
             InsertarManager(Enfermedad, request)
-        return render_template("usuarioAdmin/usuarioAdmi.html", suceso="Se elimino: ")
+        return render_template("usuarioAdmin/usuarioAdmi.html", usuario=usuarioAdentro, suceso="Se elimino: ")
     else:
-        return render_template("usuarioAdmin/usuarioAdmi.html", suceso="Algo salio mal")
+        return render_template("usuarioAdmin/usuarioAdmi.html", usuario=usuarioAdentro, suceso="Algo salio mal")
+
+@app.route('/dosis', methods=['GET','POST'])
+def dosis():
+    global usuarioAdentro
+    print("Holalalala "+ usuarioAdentro.getNombre())
+    return render_template("usuarioAdmin/usuarioAdmi.html", suceso="Ingreso a Dosis", usuario=usuarioAdentro)
+
+@app.route('/prescripcion', methods=['GET','POST'])
+def prescripcion():
+    global usuarioAdentro
+    return render_template("usuarioAdmin/usuarioAdmi.html", suceso="Ingreso a Prescripcion", usuario=usuarioAdentro)
+
+
 
 # @app.route('/register', methods=['GET','POST'])
 # def register():
