@@ -42,24 +42,21 @@ def register():
     usuario = request.form['usuario']
     contrasena = request.form['contrasena']
     permiso = request.form['permiso']
-    foto = request.files['fotoSubida'].read()
     foto1 = request.files['fotoSubida']
 
     if foto1.filename == '':
          return redirect(request.url)
     if foto1 and allowed_file(foto1.filename):
          filename = secure_filename(foto1.filename)
-         foto1.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+         #foto1.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
          #InsertarUsuarioManager(usuario, contrasena, nombreCompleto, permiso, foto)
-    #bytes = bytearray(foto)
-    #imagen64 = base64.encodebytes(foto)
-    #imagen64 = base64.b64encode(foto)
-    #print(bytes)
-    #imagen = base64.decodebytes(imagen64)
-    response = make_response(foto)
-    response.headers['Content-Type'] = 'image/jpeg'
-    response.headers['Content-Disposition'] = 'attachment; filename=img.jpg'
-    return render_template("profile.html", suceso=response)
+
+    valor = base64.b64encode(foto1.getvalue())
+    print(foto1.getvalue())
+    print(valor)
+    resultado = valor.decode('utf8')
+    print(resultado)
+    return render_template("profile.html", suceso= "data:image/jpeg;base64,"+resultado)
 
 @app.route('/agregar', methods=['GET','POST'])
 def agregar():
@@ -96,8 +93,6 @@ def agregar():
     else:
         return render_template("usuarioAdmin/usuarioAdmi.html", suceso="Algo salio mal")
 
-
-
 # @app.route('/register', methods=['GET','POST'])
 # def register():
 #     if 'fotoSubida' not in request.files:
@@ -125,6 +120,39 @@ def agregar():
 # @app.route('/uploads/<filename>')
 # def send_file(filename):
 #     return send_from_directory(UPLOAD_FOLDER, filename)
+
+@app.route("/nombre")
+@app.route("/nombre/<name>")  # Toma la url + una variable y la devuelve al html designado.
+def nombre(name=None):
+    return render_template("profile.html", name=name)
+
+
+@app.route("/procesar", methods=['GET','POST'])
+def procesar():
+    return render_template("profile.html", name="Hola")
+
+@app.route("/compras", methods=['GET','POST'])  # Pasando objetos. Una lista de productos.
+def compras():
+    apellidoE = request.form['name']
+    print(apellidoE)
+    return render_template("comprando.html", comida=salude(), persona=persona1, nombreE=apellidoE)
+
+
+@app.route('/_add_numbers')
+def add_numbers():
+    """Add two numbers server side, ridiculous but well..."""
+    a = request.args.get('a', 0, type=int)
+    b = request.args.get('b', 0, type=int)
+    return jsonify(result=a + b)
+
+
+# Siempre va la ruta y justo despues la funcion que se dispara cuando en el navegador se pone esa ruta
+@app.route('/', methods=['POST'])
+def my_form_post():
+    text = request.form['text']
+    processed_text = text.upper()
+    return processed_text
+
 
 
 # Esto lo hace correr. El debug = true permite que se impriman los errores, si se quita igual funciona
