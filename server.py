@@ -42,25 +42,21 @@ def register():
     usuario = request.form['usuario']
     contrasena = request.form['contrasena']
     permiso = request.form['permiso']
-    foto = request.files['fotoSubida'].read()
     foto1 = request.files['fotoSubida']
-
 
     if foto1.filename == '':
          return redirect(request.url)
     if foto1 and allowed_file(foto1.filename):
          filename = secure_filename(foto1.filename)
-         foto1.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+         #foto1.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
          #InsertarUsuarioManager(usuario, contrasena, nombreCompleto, permiso, foto)
-    #bytes = bytearray(foto)
-    #imagen64 = base64.encodebytes(foto)
-    #imagen64 = base64.b64encode(foto)
-    #print(bytes)
-    #imagen = base64.decodebytes(imagen64)
-    response = make_response(foto)
-    response.headers['Content-Type'] = 'image/jpeg'
-    response.headers['Content-Disposition'] = 'attachment; filename=img.jpg'
-    return render_template("profile.html", suceso=response)
+
+    valor = base64.b64encode(foto1.getvalue())
+    print(foto1.getvalue())
+    print(valor)
+    resultado = valor.decode('utf8')
+    print(resultado)
+    return render_template("profile.html", suceso= "data:image/jpeg;base64,"+resultado)
 
 @app.route('/agregar', methods=['GET','POST'])
 def agregar():
@@ -124,8 +120,6 @@ def agregar():
 # @app.route('/uploads/<filename>')
 # def send_file(filename):
 #     return send_from_directory(UPLOAD_FOLDER, filename)
-
-
 
 @app.route("/nombre")
 @app.route("/nombre/<name>")  # Toma la url + una variable y la devuelve al html designado.
