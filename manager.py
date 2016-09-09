@@ -14,12 +14,11 @@ listaTodos.extend(listarPrescripciones())
 listaTodos.extend(obtenerUsuarioBD())
 
 def InsertarManager(nombreTabla,request):
-    print(request.form['nombre'])
     nuevoObjeto = nombreTabla()
     nuevoObjeto.setNombre(request.form['nombre'])
     nuevoObjeto.setDescripcion(request.form['descripcion'])
     #imagen64 = base64.encodebytes(request.form['foto'].read())
-    #nuevoObjeto.setFoto(imagen64)
+    #nuevoObjeto.setFoto(imagen64)#arreglar lo de la insercion de la imagen..
     listaObjetos.append(nuevoObjeto)
     listaTodos.append(nuevoObjeto)
     print("Mae instacie el objeto y lo agrege: ")
@@ -112,10 +111,10 @@ InsertarPrescripcion(10,"Blanco707","Perro","Sida",10,1)
 def obtenerUsuarioManager(login,contrasena):
     listaUsuario = obtenerUsuarioBD()
     for usuario in listaUsuario:
-        if(usuario.getLogin() == login and usuario.getPassword() ==contrasena):
+        if usuario.getLogin() == login and usuario.getPassword() == contrasena:
             return usuario
     return "error"
 
 def InsertarUsuarioManager1(login,password,nombre,permiso,foto):
     insertarUsuarioBD(login, password, nombre, permiso, foto)
-    return "Hola..."
+    return "!!Se inserto en la Base de Datos¡¡"
