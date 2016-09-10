@@ -174,3 +174,4 @@ def Modificar(stringTabla, request):
     for i in listaAEM:
         if i.getClase() == "Animal":
             print(i.getNombre(), i.getDescripcion(), i.getFoto())
+    tempLista = list(filter(lambda x: x.getNombre() == request.form["nombre"]))
