@@ -1,4 +1,3 @@
-
 class Usuario:
     def __init__(self):
         self.login = ""
@@ -47,6 +46,7 @@ class Usuario:
     def getClase(self):
         return "Usuario"
 
+
 class Medicamento:
     def __init__(self):
         self.nombre = ""
@@ -75,11 +75,12 @@ class Medicamento:
     def setFoto(self, foto):
         self.foto = foto
 
-    def setFotoDecodificada(self,fotoDecodificada):
+    def setFotoDecodificada(self, fotoDecodificada):
         self.fotoDecodificada = fotoDecodificada
 
     def getClase(self):
         return "Medicamento"
+
 
 class Animal:
     def __init__(self):
@@ -108,6 +109,7 @@ class Animal:
     def getClase(self):
         return "Animal"
 
+
 class Enfermedad:
     def __init__(self):
         self.nombre = ""
@@ -135,13 +137,15 @@ class Enfermedad:
     def getClase(self):
         return "Enfermedad"
 
+
 class Dosis:
     def __init__(self):
         self.id = 0
         self.animal = ""
         self.medicamento = ""
         self.enfermedad = ""
-        self.peso = 0
+        self.min = 0
+        self.max = 0
         self.dosis = 0
 
     def getID(self):
@@ -156,8 +160,11 @@ class Dosis:
     def getEnfermedad(self):
         return self.enfermedad
 
-    def getPeso(self):
-        return self.peso
+    def getMinPeso(self):
+        return self.min
+
+    def getMaxPeso(self):
+        return self.max
 
     def getDosis(self):
         return self.dosis
@@ -174,14 +181,16 @@ class Dosis:
     def setEnfermedad(self, enfermedad):
         self.enfermedad = enfermedad
 
-    def setPeso(self, peso):
-        self.peso = peso
+    def setRangoPeso(self, min, max):
+        self.min = min
+        self.max = max
 
     def setDosis(self, dosis):
         self.dosis = dosis
 
     def getClase(self):
         return "Dosis"
+
 
 class Prescripcion:
     def __init__(self):

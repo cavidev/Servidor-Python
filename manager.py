@@ -3,7 +3,7 @@ from Conexion import *
 from DTO import *
 from flask import request
 
-#Listas Temporales
+# Listas Temporales
 listaAEM = []
 listaUsuarios = []
 listaDosis = []
@@ -17,109 +17,160 @@ generalUsuarios = obtenerUsuarioBD()
 generalDosis = listarDosis()
 generalPrescripciones = listarPrescripciones()
 
-def InsertarManager(nombreTabla,request):
-    nuevoObjeto = nombreTabla()
-    nuevoObjeto.setNombre(request.form['nombre'])
-    nuevoObjeto.setDescripcion(request.form['descripcion'])
-    #Con esto se agrega la foto a la db, la guarda como archivo de bytes, se tiene que decodificar.
-    foto = request.files['foto']
-    valor = base64.b64encode(foto.getvalue())
-    resultado = valor.decode('utf8')
-    nuevoObjeto.setFoto(resultado)
-    listaAEM.append(nuevoObjeto)
-    generalAEM.append(nuevoObjeto)
-    print("Mae instacie el objeto y lo agrege: ")
 
-
-def Insertar(nombreTabla,nombre,descripcion,foto):
-    nuevoObjeto = nombreTabla()
-    nuevoObjeto.setNombre(nombre)
-    nuevoObjeto.setDescripcion(descripcion)
-    nuevoObjeto.setFoto(foto)
-    listaAEM.append(nuevoObjeto)
-    generalAEM.append(nuevoObjeto)
-
+# Ya se reviso!!
 def InsertarUsuario(request):
-    tempLista = list(filter(lambda x: x.getLogin() == request.form["usuario"],generalUsuarios))
-    if len(tempLista) > 0 :
-        print("Ya existe un usuario con ese ID")
+    """Verifica que un usuario no tuviera el mismo ID, if agrega un usuario nuevo
+    a la lista respectiva de los usuario
+    Parametros:
+        request = datos insertados en un formularios en html,
+        el archivo imagen que recibe se codefica en ut8 para ser almacenado.
+    Returns:
+        Estado de la inserción"""
+    tempLista = list(filter(lambda x: x.getLogin() == request.form["usuario"], generalUsuarios))
+    if len(tempLista) > 0:
+        return "¡¡ Ya existe un usuario con ese ID !!"
     else:
         nuevoObjeto = Usuario()
         nuevoObjeto.setLogin(request.form["usuario"])
         nuevoObjeto.setPassword(request.form['contrasena'])
         nuevoObjeto.setNombre(request.form['nombreCompleto'])
         nuevoObjeto.setPermiso(request.form['permiso'])
-        foto = request.files['fotoSubida']
+        foto = request.files['foto']
         valor = base64.b64encode(foto.getvalue())
         resultado = valor.decode('utf8')
+        print(resultado)
         nuevoObjeto.setFoto(resultado)
         listaUsuarios.append(nuevoObjeto)
         generalUsuarios.append(nuevoObjeto)
+        return "¡¡ Se agrego a la lista de espera !!"
 
-def InsertarDosis(id,animal,medicamento,enfermedad,peso,dosis):
+
+# Ya se reviso!!
+def InsertarManager(nombreTabla, request):
+    """Agrega medicamentos/animales/enfermedades al sistema,
+    de forma generica hara el objeto.
+    :parameter
+        nombreTabla: Constructor del objeto correspondiente.
+        request: datos insertados en html, se decodifica la imagen en utf8
+            para poder ser guardada.
+    :returns
+        Estado de la inserción"""
+    nuevoObjeto = nombreTabla()
+    nuevoObjeto.setNombre(request.form['nombre'])
+    nuevoObjeto.setDescripcion(request.form['descripcion'])
+    # Con esto se agrega la foto decodificada
+    foto = request.files['foto']
+    valor = base64.b64encode(foto.getvalue())
+    resultado = valor.decode('utf8')
+    print(resultado)
+    nuevoObjeto.setFoto(resultado)
+    # ---------------------------------------
+    listaAEM.append(nuevoObjeto)
+    generalAEM.append(nuevoObjeto)
+    return "¡¡ Se agrego a la lista: " + nuevoObjeto.getClase() + "=> " + nuevoObjeto.getNombre() + "!!"
+
+
+def InsertarDosis(request):
+    """Crea un objeto con la dosis recomendada por el usuario en la lista respectiva,
+    verifica por medio de lambda que no exista una dosis con el mismo ID
+    y que animal,medicamento y enfermedad existen en sistema.
+    :parameter
+        reques: Datos insertados en el html.
+    :return
+        Estado de la inserción.
+    """
     tempLista = list(filter(lambda x: x.getID() == id, generalDosis))
-    if (len(tempLista)>0):
-        print("Ya existe una dosis con ese ID")
+    if len(tempLista) > 0:
+        return "¡¡ Ya existe una dosis con ese ID !!"
     else:
-        nuevoObjeto = Dosis()
-        nuevoObjeto.setID(id)
+        animal = request.form['animal']
+        medicamento = request.form['medicamento']
+        enfermedad = request.form['enfermedad']
+        #verifica lambda
+        for item in generalAEM:
+            print(item.getNombre())
         tempLista = list(filter(lambda x: (x.getClase() == "Animal" and x.getNombre() == animal) or
                                           (x.getClase() == "Medicamento" and x.getNombre() == medicamento) or
                                           (x.getClase() == "Enfermedad" and x.getNombre() == enfermedad)
-                                           ,generalAEM))
+                                , generalAEM))
+
         if (len(tempLista) != 3):
-            print("No se encontraron los datos solicitados")
+            return "¡¡ Verifique el animal, medicamento o enfermedad !!"
         else:
-            nuevoObjeto.setPeso(peso)
-            nuevoObjeto.setDosis(dosis)
+            nuevoObjeto = Dosis()
+            nuevoObjeto.setID(request.form['idDosis'])
+            nuevoObjeto.setAnimal(animal)
+            nuevoObjeto.setMedicamento(medicamento)
+            nuevoObjeto.setEnfermedad(enfermedad)
+            nuevoObjeto.setRangoPeso(request.form['min'], request.form['max'])
+            nuevoObjeto.setDosis(request.form['dosis'])
             listaDosis.append(nuevoObjeto)
             generalDosis.append(nuevoObjeto)
+            return "¡¡ Se insertaron los datos con exito !!"
 
-def InsertarPrescripcion(id,usuario,animal,enfermedad,peso,idDosis):
+
+def InsertarPrescripcion(request):
+    """Crea y agrega un objeto a la lista correspondiente, por medio de lambda verifica
+    que no tengan los mismo ID y que la informacion de llave primaria si aparezca en la BD
+
+    :parameter
+        request: Datos insertados por medio del html
+    :return
+        El estdo de la insercion.
+    """
+    id = request.form['idPrescripcion']
+    usuario = request.form['usuario']
+    animal = request.form['animal']
+    enfermedad = request.form['enfermedad']
+    idDosis = request.form['idDosis']
+
     tempLista = list(filter(lambda x: x.getID() == id, generalPrescripciones))
-    if (len(tempLista> 0)):
-        print("Ya existe una prescripcion con esa ID")
+    if len(tempLista) > 0:
+        return "¡¡ Ya existe una prescripcion con esa ID !!"
     else:
-        nuevoObjeto = Prescripcion()
-        nuevoObjeto.setID(id)
-        # falta un for para evitar que se repita el id
         tempAEM = list(filter(lambda x: (x.getClase() == "Animal" and x.getNombre() == animal) or
-                                          (x.getClase() == "Enfermedad" and x.getNombre() == enfermedad)
-                                , generalAEM))
-        tempUsuario = list(filter(lambda y: y.getLogin() == usuario,generalUsuarios))
-        tempDosis = list(filter(lambda z: z.getID() == idDosis,generalDosis))
-        if (len(tempAEM) != 2 or len(tempUsuario) != 1 or len(tempDosis) != 1):
-            print("No se encontraron los datos solicitados")
+                                        (x.getClase() == "Enfermedad" and x.getNombre() == enfermedad)
+                              , generalAEM))
+        tempUsuario = list(filter(lambda y: y.getLogin() == usuario, generalUsuarios))
+        tempDosis = list(filter(lambda z: z.getID() == idDosis, generalDosis))
+
+        if len(tempAEM) != 2 or len(tempUsuario) != 1 or len(tempDosis) != 1:
+            return "¡¡ No se encontraron los datos solicitados !!"
         else:
-            nuevoObjeto.setPeso(peso)
+            nuevoObjeto = Prescripcion()
+            nuevoObjeto.setID(id)
+            nuevoObjeto.setUsuario(usuario)
+            nuevoObjeto.setAnimal(animal)
+            nuevoObjeto.setEnfermedad(enfermedad)
+            nuevoObjeto.setPeso(request.form['peso'])
             nuevoObjeto.setDosis(idDosis)
             listaPrescripciones.append(nuevoObjeto)
             generalPrescripciones.append(nuevoObjeto)
+            return "¡¡ Se inserto con exito !!"
 
 
-# Insertar(Animal,"Perro","Ladra","Woof")
-# Insertar(Animal,"Gato","Maulla","Miau")
-# Insertar(Enfermedad,"Sida","Le dio a Car","Foto de Car")
-# Insertar(Enfermedad,"Gonorrea","WTF","Foto de gonorrea")
-# Insertar(Medicamento,"Cura para el sida","No hay","---")
-# Insertar(Medicamento,"Crema de rosas","Para la piel reseca","---")
-# InsertarUsuario("Blanco707","gb","EstebanB","Admin","6asd6das6das6das6d6s8das8da7sdas5qeadhascbjvas")
-# InsertarDosis(1,"Perro","Cura para el sida","Sida",10,10)
-# InsertarPrescripcion(10,"Blanco707","Perro","Sida",10,1)
-
-def obtenerUsuarioManager(login,contrasena):
+def obtenerUsuarioManager(login, contrasena):
+    """Obtien el usuario que se esta logeando,
+    Parametros:
+        login: Nombre de usuario
+        contrasena: La contraseña del usuario.
+    Returns:
+        Usuario if encuentra else estado de la busqueda."""
     listaUsuario = obtenerUsuarioBD()
-    for usuario in listaUsuario:
-        if usuario.getLogin() == login and usuario.getPassword() == contrasena:
-            return usuario
-    return "error"
+    listaGenerada = list(filter(lambda x: x.getLogin() == login and x.getPassword() == contrasena, listaUsuario))
+    if 0 < len(listaGenerada):
+        return listaGenerada[0]
+    else:
+        return "error"
 
-def InsertarUsuarioManager1(login,password,nombre,permiso,foto):
+
+def InsertarUsuarioManager1(login, password, nombre, permiso, foto):
+    'Inserta el usuario directamente en la BD.'
     return insertarUsuarioBD(login, password, nombre, permiso, foto)
+
 
 def Modificar(stringTabla, request):
     for i in listaAEM:
         if i.getClase() == "Animal":
-            print(i.getNombre(), i.getDescripcion(),i.getFoto())
-
-
+            print(i.getNombre(), i.getDescripcion(), i.getFoto())

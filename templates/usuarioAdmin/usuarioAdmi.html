@@ -39,7 +39,7 @@
                         <div class="form-group">
                             <label type="text" class="col-md-3 control-label">Foto</label>
                             <div class="col-md-9">
-                                <input name="foto" type="file" placeholder="Agregar"/>
+                                <input name="foto" type="file"/>
                             </div>
                         </div>
                         <div class="form-group" style="margin-left: 130px" >
@@ -53,19 +53,21 @@
                         <h3 style="text-align: center;">Información</h3>
                         <div>
                             <div style="float: right" >
-                                <img src="{{ usuario.getFotoDecodificada() }}" class="img-circle" alt="Cinque Terre" width="100" height="100">
+                                <img src="{{ usuario.getFoto() }}" class="img-circle" alt="Cinque Terre" width="100" height="100">
                             </div>
                         </div>
-                        {% if suceso %}
-                        <label style="text-align: center" >{{ suceso }}</label>
-                        {% endif %}
+                        <div style="float: left">
+                            {% if suceso %}
+                            <label style="text-align: center" >{{ suceso }}</label>
+                            {% endif %}
+                        </div>
                     </div>
                 </div>
                 <div style="margin-top: 350px">
                     <div style="float: left;margin-left: 20px">
                         <div style="width: 500px" class="well well-sm">
                             <h3 style="text-align: center;">Dosis</h3>
-                            <form enctype="multipart/form-data" action="{{ url_for('dosis') }}" method="post" class="form-horizontal">
+                            <form enctype="multipart/form-data" action="{{ url_for('agregarDosis') }}" method="post" class="form-horizontal">
                             <div class="form-group">
                                 <label type="text" class="col-md-3 control-label">ID</label>
                                 <div class="col-md-9">
@@ -116,7 +118,7 @@
                     <div>
                         <div style="margin-left: 75px;float: left; width: 500px" class="well well-sm">
                             <h3 style="text-align: center;">Prescripción</h3>
-                            <form enctype="multipart/form-data" action="{{ url_for('prescripcion') }}" method="post" class="form-horizontal">
+                            <form enctype="multipart/form-data" action="{{ url_for('agregarPrescripcion') }}" method="post" class="form-horizontal">
                             <div class="form-group">
                                 <label type="text" class="col-md-3 control-label">ID</label>
                                 <div class="col-md-9">
@@ -132,7 +134,7 @@
                             <div class="form-group">
                                 <label type="text" class="col-md-3 control-label">Animal</label>
                                 <div class="col-md-9">
-                                    <input type="text" class="form-control" name="animal">
+                                    <input type="text" class="form-control" name="animal" placeholder="Nombre del animal">
                                 </div>
                             </div>
                             <div class="form-group">
@@ -150,7 +152,7 @@
                             <div class="form-group">
                                 <label type="text" class="col-md-3 control-label">Dosis</label>
                                 <div class="col-md-9">
-                                    <input type="text" class="form-control" name="dosis" placeholder="Digite la dosis">
+                                    <input type="text" class="form-control" name="idDosis" placeholder="Digite le ID de la dosis">
                                 </div>
                             </div>
                             <div class="form-group" style="margin-left: 130px" >

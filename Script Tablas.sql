@@ -1,19 +1,19 @@
-create database VeterinariaEyC;
+create database veterinariaEYC;
 
-use VeterinariaEyC;
+use veterinariaEYC;
 
 create table Usuario
 (
 	login 		varchar(20),
-    pass 		varchar(20),
-    nombre		varchar(20),
+    contrasena 		varchar(20),
+    nombre		varchar(40),
     permiso 	varchar(20),
     foto 		longblob,
     CONSTRAINT pk_login PRIMARY KEY (login)
 );
 
 create table Medicamento(
-	nombre		varchar(20),
+	nombre		varchar(30),
     descripcion 	varchar(100),
     foto 		longblob,
     CONSTRAINT pk_nombreMed PRIMARY KEY (nombre)
@@ -67,20 +67,9 @@ create table Prescripcion(
 	REFERENCES Dosis(id)
 );
 
-INSERT INTO Usuario VALUES 	("Blanco707","2016","Esteban Blanco","Admin","234iji423jj432kb4223nasdnsdvn"),
-							("Palida","leidyladecompu","Leidy Chacón","Normal","234iji423jj432kb4223nasdnsdvn");
-                            
-INSERT INTO Animal VALUES 	("Perro", "Ladra", "234iji423jj432kb4223nasdnsdvn"),
-							("Gato", "Ronronea", "234iji423jj432kb4223nasdnsdvn");
-                            
-INSERT INTO Medicamento VALUES 	("Acetaminofen","Cura todo","234iji423jj432kb4223nasdnsdvn"),
-								("Violeta", "Contra heridas en la piel","234iji423jj432kb4223nasdnsdvn");
-                                
-INSERT INTO Enfermedad VALUES 	("Sarna","Se ponen feos","234iji423jj432kb4223nasdnsdvn"),
-								("Distemper", "Moquillo","234iji423jj432kb4223nasdnsdvn");
-                                
-INSERT INTO Dosis VALUES 	(1,"Gato","Violeta","Sarna",30,10),
-							(2,"Perro","Acetaminofen","Distemper",5,2);
-                            
-INSERT INTO Prescripcion VALUES 	(1,"Blanco707","Perro","Distemper",30,1),
-									(2,"Blanco707","Gato","Sarna",5,2);
+insert into usuario(login,contrasena,nombre,permiso)
+Values("Carlos","12345","Carlos Villafuerte","admin")
+select * from Usuario
+delete from usuario
+DELETE FROM `veterinariaeyc`.`usuario`
+WHERE <{where_expression}>;
