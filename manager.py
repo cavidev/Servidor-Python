@@ -87,6 +87,7 @@ def InsertarPrescripcion(id,usuario,animal,enfermedad,peso,idDosis):
         if (len(tempAEM) != 2 or len(tempUsuario) != 1 or len(tempDosis) != 1):
             print("No se encontraron los datos solicitados")
         else:
+
             nuevoObjeto.setPeso(peso)
             nuevoObjeto.setDosis(idDosis)
             listaPrescripciones.append(nuevoObjeto)
@@ -114,8 +115,6 @@ def InsertarUsuarioManager1(login,password,nombre,permiso,foto):
     return insertarUsuarioBD(login, password, nombre, permiso, foto)
 
 def Modificar(stringTabla, request):
-    for i in listaAEM:
-        if i.getClase() == "Animal":
-            print(i.getNombre(), i.getDescripcion(),i.getFoto())
+    tempLista = list(filter(lambda x: x.getNombre() == request.form["nombre"]))
 
 
