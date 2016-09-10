@@ -1,4 +1,3 @@
-import os
 from flask import Flask,request,render_template,jsonify,redirect, url_for # Esta siempre va en proyectos de flask
 from flask import make_response
 from werkzeug.utils import secure_filename
@@ -9,6 +8,10 @@ from DTO import *
 UPLOAD_FOLDER = 'imagenesUsuario'
 ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'JPG', 'jpe','jpeg', 'gif'])
 usuarioAdentro = Usuario
+listaAn = []
+listaMe = []
+listaEn = []
+cantidadPagina = 0
 
 app = Flask(__name__)  # Instancia para llamar a los routers.
 app.secret_key = 'some_secret'
@@ -18,7 +21,6 @@ app.secret_key = 'some_secret'
 def index():
     'Pinta la pagina principal, un login.'
     return render_template("login.html")
-
 
 @app.route('/profileUser', methods=['GET', 'POST'])
 def profileUser():
@@ -30,22 +32,29 @@ def profileUser():
         contasena: Contraseña del usuario.
 
     """
-    nombreUsuario = request.form['nombreUsuario']
-    contrasena = request.form['contrasena']
-    usuario = obtenerUsuarioManager(str(nombreUsuario), str(contrasena))
     global usuarioAdentro
-    usuarioAdentro = usuario
-    if usuario == "error":
-        return render_template("login.html", suceso="¡¡ No existe ese usuario !!")
-    elif(usuario.getPermiso() == "admin"):
-        resultado = "data:image/jpeg;base64," + usuario.getFoto().decode('utf8')
-        usuarioAdentro.setFoto(resultado)
-        #usuarioAdentro.setFotoDecodificada(resultado)
-        return render_template("usuarioAdmin/usuarioAdmi.html", usuario=usuario)
-    elif(usuario.getPermiso() == "normal"):
-        resultado = "data:image/jpeg;base64," + usuario.getFoto().decode('utf8')
-        usuarioAdentro.setFoto(resultado)
-        return render_template("usuarioAdmi.html", usuario=usuario)
+    if request.method == 'POST':
+        nombreUsuario = request.form['nombreUsuario']
+        contrasena = request.form['contrasena']
+        usuario = obtenerUsuarioManager(str(nombreUsuario), str(contrasena))
+
+        usuarioAdentro = usuario
+        if usuario == "error":
+            return render_template("login.html", suceso="¡¡ No existe ese usuario !!")
+        elif(usuario.getPermiso() == "admin"):
+            resultado = "data:image/jpeg;base64," + usuario.getFoto().decode('utf8')
+            usuarioAdentro.setFoto(resultado)
+            #usuarioAdentro.setFotoDecodificada(resultado)
+            return render_template("usuarioAdmin/usuarioAdmi.html", usuario=usuario)
+        elif(usuario.getPermiso() == "normal"):
+            resultado = " " + usuario.getFoto().decode('utf8')
+            usuarioAdentro.setFoto(resultado)
+            return render_template("usuarioAdmi.html", usuario=usuario)
+    else:
+        if(usuarioAdentro.getPermiso() == "admin"):
+            return render_template("usuarioAdmin/usuarioAdmi.html", usuario=usuarioAdentro)
+        elif(usuarioAdentro.getPermiso() == "normal"):
+            return render_template("usuarioAdmi.html", usuario=usuarioAdentro)
 
 
 def allowed_file(filename):
@@ -54,7 +63,7 @@ def allowed_file(filename):
            filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
 
 
-@app.route('/registerUser', methods=['GET','POST'])
+@app.route('/registerUser', methods=['GET', 'POST'])
 def registerUser():
     """Obtiene los datos de un usuario nuevo, llama a metodos de manager
     para guardarlos en la lista hasta que este listo para insertarse en la BD."""
@@ -76,7 +85,7 @@ def registerUser():
     return render_template("login.html", suceso=suceso)
 
 
-@app.route('/agregar', methods=['GET','POST'])
+@app.route('/agregar', methods=['GET', 'POST'])
 def agregar():
     """Agrega,modifica y elimina los medicamentos/animales/enfermedades a las listas respectivas,
     llama a una función generica en manager, para cada opcion agregar/modi... """
@@ -119,7 +128,7 @@ def agregar():
             return render_template("usuarioAdmin/usuarioAdmi.html", usuario=usuarioAdentro, suceso="Se elimino: ")
 
 
-@app.route('/agregarDosis', methods=['GET','POST'])
+@app.route('/agregarDosis', methods=['GET', 'POST'])
 def agregarDosis():
     global usuarioAdentro
     opcion = request.form['submit']
@@ -132,9 +141,11 @@ def agregarDosis():
     return render_template("usuarioAdmin/usuarioAdmi.html", usuario=usuarioAdentro, suceso=suceso)
 
 
-
-@app.route('/agregarPrescripcion', methods=['GET','POST'])
+@app.route('/agregarPrescripcion', methods=['GET', 'POST'])
 def agregarPrescripcion():
+    """Hace un llamado a la funcion de agregar prescipciones en manager
+    manda por parametros los datos recolectados.
+    """
     global usuarioAdentro
     opcion = request.form['submit']
     if opcion == "agregar":
@@ -144,6 +155,55 @@ def agregarPrescripcion():
     elif opcion == "eliminar":
         print("Eliminar")
     return render_template("usuarioAdmin/usuarioAdmi.html", usuario=usuarioAdentro, suceso=suceso)
+
+
+@app.route('/listarAnimales', methods=['GET', 'POST'])
+def listarAnimales():
+    global cantidadPagina
+    if len(listaAn) == 0:
+        resultado = ObtenerAnimales()
+        if resultado == "error":
+            return render_template("vistasDeListados/listadoAnimales.html", data=resultado)
+        if len(resultado)%10 != 0:
+            cantidadPagina = (len(resultado) // 10) + 2
+        else:
+            cantidadPagina = len(resultado) % 10 + 1
+        listaAn.extend(resultado)
+    if len(listaAn) <= 10:
+        listaTemp = []
+        listaTemp.extend(listaAn)
+        listaAn.clear()
+        return render_template("vistasDeListados/listadoAnimales.html", data=listaTemp, paginas=cantidadPagina)
+    else:
+        listaPri10 = []
+        listaPri10.extend(listaAn[:10])
+        listaResto = []
+        listaResto.extend(listaAn[10:])
+        listaAn.clear()
+        listaAn.extend(listaResto)
+        return render_template("vistasDeListados/listadoAnimales.html", data=listaPri10, paginas=cantidadPagina)
+
+
+@app.route('/listarMedicinas', methods=['GET', 'POST'])
+def listarMedicamentos():
+
+    # Pedir listas para presentar...¡¡
+    return render_template("vistasDeListados/listadoMedicinas.html")
+
+
+@app.route('/listarEnfermedades', methods=['GET', 'POST'])
+def listarEnfermedades():
+    # Pedir listas para presentar...¡¡
+    return render_template("vistasDeListados/listadoEnfermedades.html")
+
+
+
+
+
+
+
+
+
 
 
 

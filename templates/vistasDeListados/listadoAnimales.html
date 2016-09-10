@@ -1,0 +1,42 @@
+{% extends "vistasDeListados/layout.html" %}
+{% block body %}
+<div class="container">
+    <h2>Lista de Animales</h2>
+    <p>Listado de los animales en la DB con su descripción. El nombre correponde a la PK</p>
+    <div>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Foto</th>
+                <th>Nombre</th>
+                <th>Descripción</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if data != "error" %}
+                {% for item in data %}
+                    <tr>
+                        <td><img src="{{ "data:image/jpeg;base64,"+item.getFoto() }}" class="img-rounded" alt="Cinque Terre" width="50" height="50"></td>
+                        <td>{{ item.getNombre() }}</td>
+                        <td>{{ item.getDescripcion() }}</td>
+                    </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td>¡¡ Peligro NO hay datos !!</td>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
+    </div>
+    <div style="margin-left: 475px" >
+        {% if paginas %}
+            <ul class="pagination">
+                {% for num in range(1,paginas) %}
+                    <li><a href="listarAnimales">{{ num }}</a></li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -80,6 +80,7 @@ def InsertarDosis(request):
     :return
         Estado de la inserción.
     """
+    id = request.form['idDosis']
     tempLista = list(filter(lambda x: x.getID() == id, generalDosis))
     if len(tempLista) > 0:
         return "¡¡ Ya existe una dosis con ese ID !!"
@@ -99,7 +100,7 @@ def InsertarDosis(request):
             return "¡¡ Verifique el animal, medicamento o enfermedad !!"
         else:
             nuevoObjeto = Dosis()
-            nuevoObjeto.setID(request.form['idDosis'])
+            nuevoObjeto.setID(id)
             nuevoObjeto.setAnimal(animal)
             nuevoObjeto.setMedicamento(medicamento)
             nuevoObjeto.setEnfermedad(enfermedad)
@@ -163,6 +164,36 @@ def obtenerUsuarioManager(login, contrasena):
         return listaGenerada[0]
     else:
         return "error"
+
+
+def ObtenerAnimales():
+    """Retorna una lista con los animales de toda la BD,
+    usa una función lambda"""
+    lista = list(filter(lambda x: x.getClase() == "Animal", listaAEM))
+    if 0 < len(lista):
+        return lista
+    else:
+        return "error"
+
+
+def ObternerMedicamentos():
+    """Retorna una lista con los medicamentos de toda la BD,
+    usa una función lambda"""
+    lista = list(filter(lambda x: x.getClase() == "Medicamento", listaAEM))
+    if 0 < len(lista):
+        return "error"
+    else:
+        return lista
+
+
+def ObtenerEnfermedad():
+    """Retorna una lista con los animales de toda la BD,
+    usa una función lambda"""
+    lista = list(filter(lambda x: x.getClase() == "Enfermedad", listaAEM))
+    if 0 < len(lista):
+        return "error"
+    else:
+        return lista
 
 
 def InsertarUsuarioManager1(login, password, nombre, permiso, foto):

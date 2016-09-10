@@ -1,0 +1,33 @@
+{% extends "vistasDeListados/layout.html" %}
+{% block body %}
+<div class="container">
+    <h2>Lista de Enfermedades</h2>
+    <p>Listado de las enfermedades en la DB con su descripción. El nombre correponde a la PK</p>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Foto</th>
+                <th>Nombre</th>
+                <th>Descripción</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>John</td>
+                <td>Doe</td>
+                <td>john@example.com</td>
+            </tr>
+            <tr>
+                <td>Mary</td>
+                <td>Moe</td>
+                <td>mary@example.com</td>
+            </tr>
+            <tr>
+                <td>July</td>
+                <td>Dooley</td>
+                <td>july@example.com</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+{% endblock %}
