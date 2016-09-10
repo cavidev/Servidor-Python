@@ -38,7 +38,8 @@ create table Dosis(
 	animal				varchar(20),
     medicamento			varchar(20),
     enfermedad			varchar(20),
-    peso				int,
+    minPeso				int,
+    maxPeso				int,
     dosis				int,
     CONSTRAINT pk_idDosis PRIMARY KEY (id),
     CONSTRAINT fk_Dosis_animal FOREIGN KEY (animal)
