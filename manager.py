@@ -95,7 +95,6 @@ def InsertarDosis(request):
                                           (x.getClase() == "Medicamento" and x.getNombre() == medicamento) or
                                           (x.getClase() == "Enfermedad" and x.getNombre() == enfermedad)
                                 , generalAEM))
-
         if (len(tempLista) != 3):
             return "¡¡ Verifique el animal, medicamento o enfermedad !!"
         else:
@@ -126,8 +125,7 @@ def InsertarPrescripcion(request):
     enfermedad = request.form['enfermedad']
     idDosis = request.form['idDosis']
 
-    tempLista = list(filter(lambda x: x.getID() == id, generalPrescripciones))
-    if len(tempLista) > 0:
+    if len(list(filter(lambda x: x.getID() == id, generalPrescripciones))) > 0:
         return "¡¡ Ya existe una prescripcion con esa ID !!"
     else:
         tempAEM = list(filter(lambda x: (x.getClase() == "Animal" and x.getNombre() == animal) or
@@ -202,6 +200,142 @@ def InsertarUsuarioManager1(login, password, nombre, permiso, foto):
 
 
 def Modificar(stringTabla, request):
-    for i in listaAEM:
-        if i.getClase() == "Animal":
-            print(i.getNombre(), i.getDescripcion(), i.getFoto())
+    nombre = request.form["nombre"]
+    nuevaDesc = request.form["descripcion"]
+    foto = request.files['foto']
+    valor = base64.b64encode(foto.getvalue())
+    nuevaFoto = valor.decode('utf8')
+    if len(list(filter(lambda x: x.getClase() == stringTabla and x.getNombre() == nombre, listaAEM))) > 0:
+        list(map(lambda x: [x.setDescripcion(nuevaDesc),
+                            x.setFoto(nuevaFoto)] if x.getClase() == stringTabla and x.getNombre() == nombre else ' ', listaAEM))
+        list(map(lambda x: [x.setDescripcion(nuevaDesc),
+                            x.setFoto(nuevaFoto)] if x.getClase() == stringTabla and x.getNombre() == nombre else ' ',
+                 generalAEM))
+    else:
+        resultadoQ = ModificarBD(stringTabla,nuevaDesc,nuevaFoto,nombre)
+        if resultadoQ == 0:
+            print("No se encontró el elemento solicitado")
+        else:
+            list(map(lambda x: [x.setDescripcion(nuevaDesc),
+                                x.setFoto(nuevaFoto)] if x.getClase() == stringTabla and x.getNombre() == nombre else ' ',
+                                generalAEM))
+
+def ModificarUsuario(request):
+    usuario = request.form["usuario"]
+    contra = request.form['contrasena']
+    nombreCompleto = request.form['nombreCompleto']
+    permiso = request.form['permiso']
+    foto = request.files['foto']
+    valor = base64.b64encode(foto.getvalue())
+    resultado = valor.decode('utf8')
+    if len(list(filter(lambda x: x.getLogin() == usuario, listaUsuarios))) > 0:
+        list(map(lambda x: [x.setPassword(contra),x.setNombre(nombreCompleto),x.setPermiso(permiso),x.setFoto(resultado)]
+            if x.getLogin() == usuario else ' ', listaUsuarios))
+        list(map(lambda x: [x.setPassword(contra), x.setNombre(nombreCompleto), x.setPermiso(permiso), x.setFoto(resultado)]
+            if x.getLogin() == usuario else ' ', generalUsuarios))
+    else:
+        resultadoQ = ModificarUsuarioBD(contra,nombreCompleto,permiso,resultado,usuario)
+        if resultadoQ == 0:
+            print("No se encontró el elemento solicitado")
+        else:
+            list(map(lambda x: [x.setPassword(contra), x.setNombre(nombreCompleto), x.setPermiso(permiso),
+                                x.setFoto(resultado)] if x.getLogin() == usuario else ' ', generalUsuarios))
+
+
+def ModificarDosis(request):
+    id = request.form['idDosis']
+    animal = request.form['animal']
+    medicamento = request.form['medicamento']
+    enfermedad = request.form['enfermedad']
+    minPeso = request.form['min']
+    maxPeso = request.form['max']
+    dosis = request.form['dosis']
+    if (len(list(filter(lambda x:   (x.getClase() == "Animal" and x.getNombre() == animal) or
+                                    (x.getClase() == "Medicamento" and x.getNombre() == medicamento) or
+                                    (x.getClase() == "Enfermedad" and x.getNombre() == enfermedad)
+                                    , generalAEM))) != 3):
+        return "¡¡ Verifique el animal, medicamento o enfermedad !!"
+    else:
+        if len(list(filter(lambda x: x.getID() == id, listaDosis))) > 0:
+            list(map(lambda x: [x.setAnimal(animal), x.setMedicamento(medicamento), x.setEnfemedad(enfermedad),
+                                x.setRangoPeso(minPeso,maxPeso), x.setDosis(dosis)]
+                                if x.getID() == id else ' ', listaDosis))
+            list(map(lambda x: [x.setAnimal(animal), x.setMedicamento(medicamento), x.setEnfemedad(enfermedad),
+                                x.setRangoPeso(minPeso, maxPeso), x.setDosis(dosis)]
+                                if x.getID() == id else ' ', generalDosis))
+        else:
+            resultadoQ = ModificarDosisBD(animal,medicamento,enfermedad,minPeso,maxPeso,dosis,id)
+            if resultadoQ == 0:
+                print("No se encontró el elemento solicitado")
+            else:
+                list(map(lambda x: [x.setAnimal(animal), x.setMedicamento(medicamento), x.setEnfemedad(enfermedad),
+                                    x.setRangoPeso(minPeso, maxPeso), x.setDosis(dosis)]
+                                    if x.getID() == id else ' ', generalDosis))
+
+def ModificarPrescripcion(request):
+    id = request.form['idPrescripcion']
+    usuario = request.form['usuario']
+    animal = request.form['animal']
+    enfermedad = request.form['enfermedad']
+    peso = request.form['peso']
+    idDosis = request.form['idDosis']
+    tempAEM = list(filter(lambda x: (x.getClase() == "Animal" and x.getNombre() == animal) or
+                                    (x.getClase() == "Enfermedad" and x.getNombre() == enfermedad)
+                                    , generalAEM))
+    tempUsuario = list(filter(lambda y: y.getLogin() == usuario, generalUsuarios))
+    tempDosis = list(filter(lambda z: z.getID() == idDosis, generalDosis))
+
+    if len(tempAEM) != 2 or len(tempUsuario) != 1 or len(tempDosis) != 1:
+        return "¡¡ No se encontraron los datos solicitados !!"
+    else:
+        if len(list(filter(lambda x: x.getID() == id, generalPrescripciones))) > 0:
+            list(map(lambda x: [x.setUsuario(usuario),x.setAnimal(animal),x.setEnfemedad(enfermedad),
+                                x.setPeso(peso),x.setDosis(idDosis)]
+                                if x.getID() == id else ' ', listaPrescripciones))
+            list(map(lambda x: [x.setUsuario(usuario), x.setAnimal(animal), x.setEnfemedad(enfermedad),
+                                x.setPeso(peso), x.setDosis(idDosis)]
+                                if x.getID() == id else ' ', generalPrescripciones))
+        else:
+            resultadoQ = ModificarPrescripcionBD(usuario, animal, enfermedad,peso, idDosis, id)
+            if resultadoQ == 0:
+                print("No se encontró el elemento solicitado")
+            else:
+                list(map(lambda x: [x.setUsuario(usuario), x.setAnimal(animal), x.setEnfemedad(enfermedad),
+                                    x.setPeso(peso), x.setDosis(idDosis)]
+                                    if x.getID() == id else ' ', generalPrescripciones))
+
+# lista = []
+# a1 = Animal()
+# a1.setNombre("Perro")
+# a1.setDescripcion("Ladra")
+# a1.setFoto("asddsa")
+# a2 = Animal()
+# a2.setNombre("Gato")
+# a2.setDescripcion("Maulla")
+# a2.setFoto("dasasdd")
+# e1 = Enfermedad()
+# e1.setNombre("Sarna")
+# e1.setDescripcion("asdasdsa")
+# e1.setFoto("asddsaads")
+# m1 = Medicamento()
+# m1.setNombre("Med1")
+# m1.setDescripcion("asddsa")
+# m1.setFoto("adasd")
+# lista.append(a1)
+# lista.append(a2)
+# lista.append(e1)
+# lista.append(m1)
+# nuevaDesc = "lllllll"
+# nuevaFoto = "aaaaaaa"
+# tipo = "Animal"
+# n = "Perro"
+# for i in lista:
+#     print(i.getNombre(), i.getDescripcion(),i.getFoto())
+# if len(list(filter(lambda x:  x.getClase() == tipo and x.getNombre() == n,lista )))>0:
+#     list(map(lambda x: [x.setDescripcion(nuevaDesc),x.setFoto(nuevaFoto)] if x.getClase() == tipo and x.getNombre() == n else ' ',lista))
+# else:
+#     print("Buscando en BD")
+#
+# for i in lista:
+#     print(i.getNombre(), i.getDescripcion(),i.getFoto())
+

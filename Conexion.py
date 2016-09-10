@@ -34,6 +34,7 @@ def listar(nombreTabla):
         nuevo = nombreTabla()
         nuevo.setNombre(nombre)
         nuevo.setDescripcion(descripcion)
+
         decodificada = foto.decode('utf8')
         nuevo.setFoto(decodificada)
         listaElementos.append(nuevo)
@@ -46,13 +47,13 @@ def listarDosis():
     cursor = conexion_mysql.cursor()
     cursor.execute("Select * from Dosis")
     listaElementos = []
-    for (id,animal,medicamento,enfermedad,peso,dosis) in cursor:
+    for (id,animal,medicamento,enfermedad,minPeso,maxPeso,dosis) in cursor:
         nuevo = Dosis()
         nuevo.setID(id)
         nuevo.setAnimal(animal)
         nuevo.setMedicamento(medicamento)
         nuevo.setEnfermedad(enfermedad)
-        nuevo.setPeso(peso)
+        nuevo.setRangoPeso(minPeso,maxPeso)
         nuevo.setDosis(dosis)
         listaElementos.append(nuevo)
     cursor.close()
@@ -119,3 +120,83 @@ def insertarUsuarioBD(login, contrasena, nombre, permiso,foto):
         cursor.close()
         conexion_mysql.close()
     return error
+
+def ModificarBD(nombretabla,nuevaDesc, nuevaFoto,nombre):
+    query = ""
+    if (nombretabla == "Animal"):
+        query = "update Animal "
+    elif (nombretabla == "Enfermedad"):
+        query = "update Enfermedad "
+    elif (nombretabla == "Medicamento"):
+        query = "update Medicamento "
+    query += "set descripcion = %s,foto = %s Where nombre = %s"
+    args = (nuevaDesc,nuevaFoto,nombre)
+    error = "Exito!"
+    try:
+        conexion_mysql = mysql.connector.connect(**config_mysql)
+        cursor = conexion_mysql.cursor()
+        cursor.execute(query, args)
+        error = cursor.rowcount
+        conexion_mysql.commit()
+    except Error as e:
+        error = e
+    finally:
+        cursor.close()
+        conexion_mysql.close()
+    return error
+
+def ModificarUsuarioBD(nuevaPass, nuevoNombre,nuevoPermiso,nuevaFoto,nombre):
+    query = "update Usuario set contrasena = %s,nombre = %s,permiso = %s,foto = %s Where login = %s"
+    args = (nuevaPass,nuevoNombre,nuevoPermiso,nuevaFoto,nombre)
+    error = "Exito!"
+    try:
+        conexion_mysql = mysql.connector.connect(**config_mysql)
+        cursor = conexion_mysql.cursor()
+        cursor.execute(query, args)
+        error = cursor.rowcount
+        conexion_mysql.commit()
+    except Error as e:
+        error = e
+    finally:
+        cursor.close()
+        conexion_mysql.close()
+    return error
+
+def ModificarDosisBD(animal,medicamento,enfermedad,minPeso,maxPeso,dosis,id):
+    query = "update Dosis set animal = %s,medicamento = %s,enfermedad = %s," \
+            "minPeso = %s, maxPeso = %s, dosis = %s Where id = %s"
+    args = (animal,medicamento,enfermedad,minPeso,maxPeso,dosis,id)
+    error = "Exito!"
+    try:
+        conexion_mysql = mysql.connector.connect(**config_mysql)
+        cursor = conexion_mysql.cursor()
+        cursor.execute(query, args)
+        error = cursor.rowcount
+        conexion_mysql.commit()
+    except Error as e:
+        error = e
+    finally:
+        cursor.close()
+        conexion_mysql.close()
+    print(error)
+    return error
+
+def ModificarPrescripcionBD(usuario, animal, enfermedad,peso, idDosis, id):
+    query = "update Prescripcion set usuario = %s, animal = %s, enfermedad = %s," \
+            "peso = %s, idDosis = %s Where id = %s"
+    args = (usuario, animal, enfermedad,peso, idDosis, id)
+    error = "Exito!"
+    try:
+        conexion_mysql = mysql.connector.connect(**config_mysql)
+        cursor = conexion_mysql.cursor()
+        cursor.execute(query, args)
+        error = cursor.rowcount
+        conexion_mysql.commit()
+    except Error as e:
+        error = e
+    finally:
+        cursor.close()
+        conexion_mysql.close()
+    print(error)
+    return error
+
