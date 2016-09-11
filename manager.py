@@ -63,7 +63,6 @@ def InsertarManager(nombreTabla, request):
     foto = request.files['foto']
     valor = base64.b64encode(foto.getvalue())
     resultado = valor.decode('utf8')
-    print(resultado)
     nuevoObjeto.setFoto(resultado)
     # ---------------------------------------
     listaAEM.append(nuevoObjeto)
@@ -149,51 +148,6 @@ def InsertarPrescripcion(request):
             return "¡¡ Se inserto con exito !!"
 
 
-def obtenerUsuarioManager(login, contrasena):
-    """Obtien el usuario que se esta logeando,
-    Parametros:
-        login: Nombre de usuario
-        contrasena: La contraseña del usuario.
-    Returns:
-        Usuario if encuentra else estado de la busqueda."""
-    listaUsuario = obtenerUsuarioBD()
-    listaGenerada = list(filter(lambda x: x.getLogin() == login and x.getPassword() == contrasena, listaUsuario))
-    if 0 < len(listaGenerada):
-        return listaGenerada[0]
-    else:
-        return "error"
-
-
-def ObtenerAnimales():
-    """Retorna una lista con los animales de toda la BD,
-    usa una función lambda"""
-    lista = list(filter(lambda x: x.getClase() == "Animal", listaAEM))
-    if 0 < len(lista):
-        return lista
-    else:
-        return "error"
-
-
-def ObternerMedicamentos():
-    """Retorna una lista con los medicamentos de toda la BD,
-    usa una función lambda"""
-    lista = list(filter(lambda x: x.getClase() == "Medicamento", listaAEM))
-    if 0 < len(lista):
-        return "error"
-    else:
-        return lista
-
-
-def ObtenerEnfermedad():
-    """Retorna una lista con los animales de toda la BD,
-    usa una función lambda"""
-    lista = list(filter(lambda x: x.getClase() == "Enfermedad", listaAEM))
-    if 0 < len(lista):
-        return "error"
-    else:
-        return lista
-
-
 def InsertarUsuarioManager1(login, password, nombre, permiso, foto):
     'Inserta el usuario directamente en la BD.'
     return insertarUsuarioBD(login, password, nombre, permiso, foto)
@@ -212,13 +166,14 @@ def Modificar(stringTabla, request):
                             x.setFoto(nuevaFoto)] if x.getClase() == stringTabla and x.getNombre() == nombre else ' ',
                  generalAEM))
     else:
-        resultadoQ = ModificarBD(stringTabla,nuevaDesc,nuevaFoto,nombre)
+        resultadoQ = ModificarBD(stringTabla, nuevaDesc, nuevaFoto, nombre)
         if resultadoQ == 0:
-            print("No se encontró el elemento solicitado")
+            return "¡¡ No se encontró el elemento solicitado !!"
         else:
             list(map(lambda x: [x.setDescripcion(nuevaDesc),
                                 x.setFoto(nuevaFoto)] if x.getClase() == stringTabla and x.getNombre() == nombre else ' ',
                                 generalAEM))
+
 
 def ModificarUsuario(request):
     usuario = request.form["usuario"]
@@ -272,6 +227,7 @@ def ModificarDosis(request):
                                     x.setRangoPeso(minPeso, maxPeso), x.setDosis(dosis)]
                                     if x.getID() == id else ' ', generalDosis))
 
+
 def ModificarPrescripcion(request):
     id = request.form['idPrescripcion']
     usuario = request.form['usuario']
@@ -304,38 +260,73 @@ def ModificarPrescripcion(request):
                                     x.setPeso(peso), x.setDosis(idDosis)]
                                     if x.getID() == id else ' ', generalPrescripciones))
 
-# lista = []
-# a1 = Animal()
-# a1.setNombre("Perro")
-# a1.setDescripcion("Ladra")
-# a1.setFoto("asddsa")
-# a2 = Animal()
-# a2.setNombre("Gato")
-# a2.setDescripcion("Maulla")
-# a2.setFoto("dasasdd")
-# e1 = Enfermedad()
-# e1.setNombre("Sarna")
-# e1.setDescripcion("asdasdsa")
-# e1.setFoto("asddsaads")
-# m1 = Medicamento()
-# m1.setNombre("Med1")
-# m1.setDescripcion("asddsa")
-# m1.setFoto("adasd")
-# lista.append(a1)
-# lista.append(a2)
-# lista.append(e1)
-# lista.append(m1)
-# nuevaDesc = "lllllll"
-# nuevaFoto = "aaaaaaa"
-# tipo = "Animal"
-# n = "Perro"
-# for i in lista:
-#     print(i.getNombre(), i.getDescripcion(),i.getFoto())
-# if len(list(filter(lambda x:  x.getClase() == tipo and x.getNombre() == n,lista )))>0:
-#     list(map(lambda x: [x.setDescripcion(nuevaDesc),x.setFoto(nuevaFoto)] if x.getClase() == tipo and x.getNombre() == n else ' ',lista))
-# else:
-#     print("Buscando en BD")
-#
-# for i in lista:
-#     print(i.getNombre(), i.getDescripcion(),i.getFoto())
 
+def obtenerUsuarioManager(login, contrasena):
+    """Obtien el usuario que se esta logeando,
+    Parametros:
+        login: Nombre de usuario
+        contrasena: La contraseña del usuario.
+    Returns:
+        Usuario if encuentra else estado de la busqueda."""
+    listaUsuario = obtenerUsuarioBD()
+    listaGenerada = list(
+        filter(lambda x: x.getLogin() == login and x.getPassword() == contrasena, listaUsuario))
+    if 0 < len(listaGenerada):
+        return listaGenerada[0]
+    else:
+        return "error"
+
+
+def ObtenerAEM(filtro):
+    """Retorna una lista con los animales de toda la BD,
+    usa una función lambda"""
+    lista = list(filter(lambda x: x.getClase() == filtro, listaAEM))
+    if 0 < len(lista):
+        return lista
+    else:
+        return "error"
+
+
+def ObtenerIdDosis(request):
+    animal = request.form['animal']
+    enfermedad = request.form['enfermedad']
+    peso = request.form['peso']
+    listaTemp = list(filter(lambda x: x.getAnimal() == animal and x.getEnfermedad() == enfermedad
+                            and (x.getMinPeso() <= peso < x.getMaxPeso()), listaDosis))
+    if len(listaTemp) > 0:
+        return listaTemp
+    else:
+        return "error"
+
+
+def ObtenerDosis():
+    if len(generalDosis) > 0:
+        return generalDosis
+    else:
+        return "error"
+
+
+def ObtenerPrescripcion():
+    if len(generalPrescripciones) > 0:
+        return generalPrescripciones
+    else:
+        return "error"
+
+
+def ObternerFiltroDosis(request):
+    pedido = request.form['pedido']
+    opcion = request.form['submit']
+    if "Animal" == opcion:
+        lista = list(filter(lambda x: x.getAnimal() == pedido, generalDosis))
+        print("Manager")
+        print(lista)
+        if len(lista) > 0:
+            return lista
+        else:
+            return "error"
+    else:
+        lista = list(filter(lambda x: x.getEnfermedad() == pedido, generalDosis))
+        if len(lista) > 0:
+            return lista
+        else:
+            return "error"

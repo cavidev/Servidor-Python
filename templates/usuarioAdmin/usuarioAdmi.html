@@ -2,7 +2,7 @@
 {% block body %}
 <div class="container" >
     <div style="margin-top:30px;">
-        <div class="panel panel-success">
+        <div class="panel panel-default" style="color: lightslategrey">
             <div class="panel-heading">
                 {% if usuario %}
                 <div class="panel-title"> Bienvenido: {{usuario.getNombre()}}</div>
@@ -128,31 +128,34 @@
                             <div class="form-group">
                                 <label type="text" class="col-md-3 control-label">Usuario</label>
                                 <div class="col-md-9">
-                                    <input type="text" class="form-control" name="usuario" placeholder="Digite el nombre del usuario">
+                                    <input type="text" class="form-control" name="usuario" value="{{ usuario.getLogin() }}">
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label type="text" class="col-md-3 control-label">Animal</label>
                                 <div class="col-md-9">
-                                    <input type="text" class="form-control" name="animal" placeholder="Nombre del animal">
+                                    <input type="text" class="form-control" name="animal" value="{{ animal }}" placeholder="Nombre del animal">
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label type="text" class="col-md-3 control-label">Enfermedad</label>
                                 <div class="col-md-9">
-                                    <input type="text" class="form-control" name="enfermedad" placeholder="Digite la enfermedad">
+                                    <input type="text" class="form-control" name="enfermedad" value="{{ enfermedad }}" placeholder="Digite la enfermedad">
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label type="text" class="col-md-3 control-label">Peso</label>
-                                <div class="col-md-9">
-                                    <input type="text" class="form-control" name="peso" placeholder="Digite el peso">
+                                <div class="col-md-4">
+                                    <input type="text" class="form-control" name="peso" value="{{ peso }}" placeholder="Digite el peso">
+                                </div>
+                                <div class="col-md-4">
+                                    <button type="submit" name="submit" value="getID" class="btoBuscarID">ID-Dosis</button>
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label type="text" class="col-md-3 control-label">Dosis</label>
                                 <div class="col-md-9">
-                                    <input type="text" class="form-control" name="idDosis" placeholder="Digite le ID de la dosis">
+                                    <input type="text" class="form-control" name="idDosis" value="{{ idDosis }}" placeholder="Digite le ID de la dosis">
                                 </div>
                             </div>
                             <div class="form-group" style="margin-left: 130px" >

@@ -8,3 +8,67 @@ label{
 body{
     background-image: url(./img/fondoIndex.jpg);
 }
+
+.btoBuscarID {
+	background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #282e2a), color-stop(1, #646b60));
+	background:-moz-linear-gradient(top, #282e2a 5%, #646b60 100%);
+	background:-webkit-linear-gradient(top, #282e2a 5%, #646b60 100%);
+	background:-o-linear-gradient(top, #282e2a 5%, #646b60 100%);
+	background:-ms-linear-gradient(top, #282e2a 5%, #646b60 100%);
+	background:linear-gradient(to bottom, #282e2a 5%, #646b60 100%);
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#282e2a', endColorstr='#646b60',GradientType=0);
+	background-color:#282e2a;
+	-moz-border-radius:28px;
+	-webkit-border-radius:28px;
+	border-radius:28px;
+	border:1px solid #39423a;
+	display:inline-block;
+	cursor:pointer;
+	color:#ffffff;
+	font-family:Arial;
+	font-size:12px;
+	padding:8px 31px;
+	text-decoration:none;
+	text-shadow:0px 1px 0px #3a4039;
+}
+.btoBuscarID:hover {
+	background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #646b60), color-stop(1, #282e2a));
+	background:-moz-linear-gradient(top, #646b60 5%, #282e2a 100%);
+	background:-webkit-linear-gradient(top, #646b60 5%, #282e2a 100%);
+	background:-o-linear-gradient(top, #646b60 5%, #282e2a 100%);
+	background:-ms-linear-gradient(top, #646b60 5%, #282e2a 100%);
+	background:linear-gradient(to bottom, #646b60 5%, #282e2a 100%);
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#646b60', endColorstr='#282e2a',GradientType=0);
+	background-color:#646b60;
+}
+.btoBuscarID:active {
+	position:relative;
+	top:1px;
+}
+
+.btoFiltro {
+	-moz-box-shadow:inset 0px 0px 14px -3px #f2fadc;
+	-webkit-box-shadow:inset 0px 0px 14px -3px #f2fadc;
+	box-shadow:inset 0px 0px 14px -3px #f2fadc;
+	background-color:#161715;
+	-moz-border-radius:6px;
+	-webkit-border-radius:6px;
+	border-radius:6px;
+	border:1px solid #b2b8ad;
+	display:inline-block;
+	cursor:pointer;
+	color:#adb3a8;
+	font-family:Arial;
+	font-size:12px;
+	font-weight:bold;
+	padding:6px 24px;
+	text-decoration:none;
+	text-shadow:0px 1px 0px #ced9bf;
+}
+.btoFiltro:hover {
+	background-color:#9ba892;
+}
+.btoFiltro:active {
+	position:relative;
+	top:1px;
+}

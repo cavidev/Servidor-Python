@@ -8,10 +8,21 @@ from DTO import *
 UPLOAD_FOLDER = 'imagenesUsuario'
 ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'JPG', 'jpe','jpeg', 'gif'])
 usuarioAdentro = Usuario
+
+filtroActivo = False
+
 listaAn = []
 listaMe = []
-listaEn = []
-cantidadPagina = 0
+listaPr = []
+lista_Do_Fi = []
+lista_Do_Ge = []
+cantPagAn = 0
+cantPagPr = 0
+cantPagMe = 0
+cantPagDo = 0
+cantPag_Do_Fi_An = 0
+cantPag_Do_Fi_En = 0
+
 
 app = Flask(__name__)  # Instancia para llamar a los routers.
 app.secret_key = 'some_secret'
@@ -99,21 +110,17 @@ def agregar():
             if categoria == "Medicamento":
                 suceso = InsertarManager(Medicamento, request)
             elif categoria == "Animal":
-                print("Llego al server")
                 suceso = InsertarManager(Animal, request)
             elif categoria == "Enfermedad":
                 suceso = InsertarManager(Enfermedad, request)
             return render_template("usuarioAdmin/usuarioAdmi.html", suceso=suceso, usuario=usuarioAdentro)
         elif opcion == "modificar":
             if categoria == "Medicamento":
-                print("Modificar")
-                #ModificarManager(Medicamento, request)
+                suceso = Modificar("Medicamento",request)
             elif categoria == "Animal":
-                print("Modificar")
-                # ModificarManager(Animal, request)
+                suceso = Modificar("Animal", request)
             elif categoria == "Enfermedad":
-                print("Modificar")
-                #ModificarManager(Enfermedad, request)
+                suceso = Modificar("Enfermedad", request)
             return render_template("usuarioAdmin/usuarioAdmi.html", usuario=usuarioAdentro, suceso="Se modifico: ")
         elif opcion == "eliminar":
             if categoria == "Medicamento":
@@ -135,7 +142,7 @@ def agregarDosis():
     if opcion == "agregar":
         suceso = InsertarDosis(request)
     elif opcion == "modificar":
-        print("Modificar")
+        ModificarDosis(request)
     elif opcion == "eliminar":
         print("Eliminar")
     return render_template("usuarioAdmin/usuarioAdmi.html", usuario=usuarioAdentro, suceso=suceso)
@@ -147,33 +154,47 @@ def agregarPrescripcion():
     manda por parametros los datos recolectados.
     """
     global usuarioAdentro
+
     opcion = request.form['submit']
-    if opcion == "agregar":
-        suceso = InsertarPrescripcion(request)
-    elif opcion == "modificar":
-        print("Modificar")
-    elif opcion == "eliminar":
-        print("Eliminar")
-    return render_template("usuarioAdmin/usuarioAdmi.html", usuario=usuarioAdentro, suceso=suceso)
+    if "getID" != opcion:
+        if opcion == "agregar":
+            suceso = InsertarPrescripcion(request)
+        elif opcion == "modificar":
+            ModificarPrescripcion(request)
+        elif opcion == "eliminar":
+            print("Eliminar")
+        return render_template("usuarioAdmin/usuarioAdmi.html", usuario=usuarioAdentro, suceso=suceso)
+    else:
+        animal = request.form['animal']
+        enfermedad = request.form['enfermedad']
+        peso = request.form['peso']
+        idDosis = ObtenerIdDosis(request)
+        if idDosis != "error":
+            return render_template("usuarioAdmin/usuarioAdmi.html", usuario=usuarioAdentro,
+                               suceso="Se recupero el ID: "+idDosis[0].getID(),
+                               animal=animal, enfermedad=enfermedad, peso=peso, idDosis=idDosis[0].getID())
+        else:
+            return render_template("usuarioAdmin/usuarioAdmi.html", usuario=usuarioAdentro,
+                                   suceso="¡¡ No existe en la Base de Datos !!")
 
 
 @app.route('/listarAnimales', methods=['GET', 'POST'])
 def listarAnimales():
-    global cantidadPagina
+    global cantPagAn
     if len(listaAn) == 0:
-        resultado = ObtenerAnimales()
+        resultado = ObtenerAEM("Animal")
         if resultado == "error":
             return render_template("vistasDeListados/listadoAnimales.html", data=resultado)
         if len(resultado)%10 != 0:
-            cantidadPagina = (len(resultado) // 10) + 2
+            cantPagAn = (len(resultado) // 10) + 2
         else:
-            cantidadPagina = len(resultado) % 10 + 1
+            cantPagAn = len(resultado) % 10 + 1
         listaAn.extend(resultado)
     if len(listaAn) <= 10:
         listaTemp = []
         listaTemp.extend(listaAn)
         listaAn.clear()
-        return render_template("vistasDeListados/listadoAnimales.html", data=listaTemp, paginas=cantidadPagina)
+        return render_template("vistasDeListados/listadoAnimales.html", data=listaTemp, paginas=cantPagAn)
     else:
         listaPri10 = []
         listaPri10.extend(listaAn[:10])
@@ -181,22 +202,131 @@ def listarAnimales():
         listaResto.extend(listaAn[10:])
         listaAn.clear()
         listaAn.extend(listaResto)
-        return render_template("vistasDeListados/listadoAnimales.html", data=listaPri10, paginas=cantidadPagina)
+        return render_template("vistasDeListados/listadoAnimales.html", data=listaPri10, paginas=cantPagAn)
 
 
 @app.route('/listarMedicinas', methods=['GET', 'POST'])
 def listarMedicamentos():
+    global cantPagMe
+    if len(listaMe) == 0:
+        resultado = ObtenerAEM("Medicamento")
+        if resultado == "error":
+            return render_template("vistasDeListados/listadoMedicinas.html", data=resultado)
+        if len(resultado)%10 != 0:
+            cantPagMe = (len(resultado) // 10) + 2
+        else:
+            cantPagMe = len(resultado) % 10 + 1
+        listaMe.extend(resultado)
+    if len(listaMe) <= 10:
+        listaTemp = []
+        listaTemp.extend(listaMe)
+        listaAn.clear()
+        return render_template("vistasDeListados/listadoMedicinas.html", data=listaTemp, paginas=cantPagMe)
+    else:
+        listaPri10 = []
+        listaPri10.extend(listaMe[:10])
+        listaResto = []
+        listaResto.extend(listaMe[10:])
+        listaMe.clear()
+        listaMe.extend(listaResto)
+        return render_template("vistasDeListados/listadoMedicinas.html", data=listaPri10, paginas=cantPagMe)
 
-    # Pedir listas para presentar...¡¡
-    return render_template("vistasDeListados/listadoMedicinas.html")
 
-
-@app.route('/listarEnfermedades', methods=['GET', 'POST'])
+@app.route('/listarPrescripciones', methods=['GET', 'POST'])
 def listarEnfermedades():
-    # Pedir listas para presentar...¡¡
-    return render_template("vistasDeListados/listadoEnfermedades.html")
+    global cantPagPr
+    if len(listaPr) == 0:
+        resultado = ObtenerPrescripcion()
+        if resultado == "error":
+            return render_template("vistasDeListados/listadoPrescripcion.html", data=resultado)
+        print(resultado)
+        if len(resultado) % 10 != 0:
+            cantPagPr = (len(resultado) // 10) + 2
+        else:
+            cantPagPr = len(resultado) % 10 + 1
+        listaPr.extend(resultado)
+    if len(listaPr) <= 10:
+        listaTemp = []
+        listaTemp.extend(listaPr)
+        listaPr.clear()
+        return render_template("vistasDeListados/listadoPrescripcion.html", data=listaTemp, paginas=cantPagPr)
+    else:
+        listaPri10 = []
+        listaPri10.extend(listaPr[:10])
+        listaResto = []
+        listaResto.extend(listaPr[10:])
+        listaAn.clear()
+        listaAn.extend(listaResto)
+        return render_template("vistasDeListados/listadoPrescripcion.html", data=listaPri10, paginas=cantPagPr)
 
 
+@app.route('/listarDosis', methods=['GET', 'POST'])
+def listarDosis():
+    global cantPag_Do_Fi_An
+    global filtroActivo
+    if request.method == 'POST':
+        resultado = ObternerFiltroDosis(request)
+        print("Server")
+        print(resultado)
+        if resultado == "error":
+            return render_template("vistasDeListados/listadoDosis.html", data=resultado)
+        if len(resultado) % 10 != 0:
+            cantPag_Do_Fi_An = (len(resultado) // 10) + 2
+        else:
+            cantPag_Do_Fi_An = len(resultado) % 10 + 1
+        lista_Do_Fi.extend(resultado)
+        filtroActivo = True
+        if len(lista_Do_Fi) <= 10:
+            listaTemp = []
+            listaTemp.extend(lista_Do_Fi)
+            lista_Do_Fi.clear()
+            filtroActivo = False
+            return render_template("vistasDeListados/listadoDosis.html", data=listaTemp, paginas=cantPag_Do_Fi_An)
+        else:
+            listaPri10 = []
+            listaPri10.extend(lista_Do_Fi[:10])
+            listaResto = []
+            listaResto.extend(lista_Do_Fi[10:])
+            lista_Do_Fi.clear()
+            lista_Do_Fi.extend(listaResto)
+            return render_template("vistasDeListados/listadoDosis.html", data=listaPri10, paginas=cantPag_Do_Fi_An)
+    if filtroActivo == True:
+        if len(lista_Do_Fi) <= 10:
+            listaTemp = []
+            listaTemp.extend(lista_Do_Fi)
+            lista_Do_Fi.clear()
+            filtroActivo = False
+            return render_template("vistasDeListados/listadoDosis.html", data=listaTemp, paginas=cantPag_Do_Fi_An)
+        else:
+            listaPri10 = []
+            listaPri10.extend(lista_Do_Fi[:10])
+            listaResto = []
+            listaResto.extend(lista_Do_Fi[10:])
+            lista_Do_Fi.clear()
+            lista_Do_Fi.extend(listaResto)
+            return render_template("vistasDeListados/listadoDosis.html", data=listaPri10, paginas=cantPag_Do_Fi_An)
+    if len(lista_Do_Ge) == 0:
+        resultado = ObtenerDosis()
+        if resultado == "error":
+            return render_template("vistasDeListados/listadoDosis.html", data=resultado)
+        if len(resultado) % 10 != 0:
+            cantPag_Do_Fi_An = (len(resultado) // 10) + 2
+        else:
+            cantPag_Do_Fi_An = len(resultado) % 10 + 1
+        lista_Do_Ge.extend(resultado)
+    if len(lista_Do_Ge) <= 10:
+        listaTemp = []
+        listaTemp.extend(lista_Do_Ge)
+        lista_Do_Ge.clear()
+        return render_template("vistasDeListados/listadoDosis.html", data=listaTemp, paginas=cantPag_Do_Fi_An)
+    else:
+        listaPri10 = []
+        listaPri10.extend(lista_Do_Ge[:10])
+        listaResto = []
+        listaResto.extend(lista_Do_Ge[10:])
+        lista_Do_Ge.clear()
+        lista_Do_Ge.extend(listaResto)
+        return render_template("vistasDeListados/listadoDosis.html", data=listaPri10, paginas=cantPag_Do_Fi_An)
 
 
 
