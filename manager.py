@@ -8,15 +8,61 @@ listaAEM = []
 listaUsuarios = []
 listaDosis = []
 listaPrescripciones = []
+
+def LimpiarListasLocales():
+    listaAEM.clear()
+    listaUsuarios.clear()
+    listaDosis.clear()
+    listaPrescripciones.clear()
+
 # Listas Generales
 generalAEM = []
-generalAEM.extend(listar(Animal))
-generalAEM.extend(listar(Medicamento))
-generalAEM.extend(listar(Enfermedad))
-generalUsuarios = obtenerUsuarioBD()
-generalDosis = listarDosis()
-generalPrescripciones = listarPrescripciones()
+generalUsuarios = []
+generalDosis = []
+generalPrescripciones = []
 
+def CargarListasGenerales():
+    global generalAEM,generalUsuarios,generalDosis,generalPrescripciones
+    generalAEM.extend(listar(Animal))
+    generalAEM.extend(listar(Medicamento))
+    generalAEM.extend(listar(Enfermedad))
+    generalUsuarios = obtenerUsuarioBD()
+    generalDosis = listarDosis()
+    generalPrescripciones = listarPrescripciones()
+
+CargarListasGenerales()
+
+# Contador Global
+contador  = 0
+def AumentarContador():
+    global contador
+    contador = contador+1
+
+# Generadores
+def generadorAEM():
+    global contador
+    while True:
+        yield listaAEM[contador]
+
+def generadorUsuarios():
+    global contador
+    while True:
+        yield listaUsuarios[contador]
+
+def generadorDosis():
+    global contador
+    while True:
+        yield listaDosis[contador]
+
+def generadorPrescripciones():
+    global contador
+    while True:
+        yield listaPrescripciones[contador]
+
+gAEM = generadorAEM()
+gUsuarios = generadorUsuarios()
+gDosis = generadorDosis()
+gPresc = generadorPrescripciones()
 
 # Ya se reviso!!
 def InsertarUsuario(request):
@@ -382,39 +428,73 @@ def EliminarPrescripcion(request):
     else:
         generalPrescripciones = list(filter(lambda x: x.getID() == idPresc, generalPrescripciones))
 
+def GuardarCambios():
+    global contador
+    list(map(lambda x: [InsertarBD(gAEM.__next__().getClase(),gAEM.__next__().getNombre(),
+                                  gAEM.__next__().getDescripcion(), gAEM.__next__().getFoto()),
+                                  AumentarContador()],range(len(listaAEM))))
+    contador = 0
+    list(map(lambda x: [insertarUsuarioBD(gUsuarios.__next__().getLogin(),gUsuarios.__next__().getPassword(),
+                                  gUsuarios.__next__().getNombre(), gUsuarios.__next__().getPermiso(),
+                                  gUsuarios.__next__().getFoto()),AumentarContador()],range(len(listaUsuarios))))
+    contador = 0
+    list(map(lambda x: [InsertarDosisBD(gDosis.__next__().getID(), gDosis.__next__().getAnimal(),
+                                  gDosis.__next__().getMedicamento(), gDosis.__next__().getEnfermedad(),
+                                  gDosis.__next__().getMinPeso(),gDosis.__next__().getMaxPeso(),
+                                  gDosis.__next__().getDosis()),AumentarContador()],range(len(listaDosis))))
+    contador = 0
+    list(map(lambda x: [InsertarPrescripcionBD(gPresc.__next__().getID(), gPresc.__next__().getUsuario(),
+                                              gPresc.__next__().getAnimal(), gPresc.__next__().getEnfermedad(),
+                                              gPresc.__next__().getPeso(), gPresc.__next__().getDosis()),AumentarContador()],
+                                              range(len(listaPrescripciones))))
+    contador = 0
+    CargarListasGenerales()
+    LimpiarListasLocales()
+    print("Se han guardado todos los cambios! ")
 
-# lista = []
+# u1 = Usuario()
+# u1.setLogin("Car")
+# u1.setPassword(123)
+# u1.setNombre("Carlos Villafuerte")
+# u1.setPermiso("admin")
+# u1.setFoto("assdadsa")
 # a1 = Animal()
-# a1.setNombre("Perro")
+# a1.setNombre("Lobo")
 # a1.setDescripcion("Ladra")
 # a1.setFoto("asddsa")
 # a2 = Animal()
-# a2.setNombre("Gato")
+# a2.setNombre("Leon")
 # a2.setDescripcion("Maulla")
 # a2.setFoto("dasasdd")
 # e1 = Enfermedad()
-# e1.setNombre("Sarna")
+# e1.setNombre("Distemper")
 # e1.setDescripcion("asdasdsa")
 # e1.setFoto("asddsaads")
 # m1 = Medicamento()
-# m1.setNombre("Med1")
+# m1.setNombre("Paracetamol")
 # m1.setDescripcion("asddsa")
 # m1.setFoto("adasd")
-# lista.append(a1)
-# lista.append(a2)
-# lista.append(e1)
-# lista.append(m1)
-# nuevaDesc = "lllllll"
-# nuevaFoto = "aaaaaaa"
-# tipo = "Animal"
-# n = "Perro"
-# for i in lista:
-#     print(i.getNombre(), i.getDescripcion(),i.getFoto())
-# if len(list(filter(lambda x:  x.getClase() == tipo and x.getNombre() == n,lista )))>0:
-#     list(map(lambda x: [x.setDescripcion(nuevaDesc),x.setFoto(nuevaFoto)] if x.getClase() == tipo and x.getNombre() == n else ' ',lista))
-# else:
-#     print("Buscando en BD")
+# d1 = Dosis()
+# d1.setID(4)
+# d1.setAnimal("Perro")
+# d1.setEnfermedad("Distemper")
+# d1.setMedicamento("Paracetamol")
+# d1.setRangoPeso(8,15)
+# d1.setDosis(13)
+# p1 = Prescripcion()
+# p1.setID(2)
+# p1.setUsuario("Car")
+# p1.setAnimal("Lobo")
+# p1.setEnfermedad("Distemper")
+# p1.setPeso(10)
+# p1.setDosis(4)
+# listaAEM.append(a1)
+# listaAEM.append(a2)
+# listaAEM.append(e1)
+# listaAEM.append(m1)
+# print(range(len(listaAEM)))
+# listaUsuarios.append(u1)
+# listaDosis.append(d1)
+# listaPrescripciones.append(p1)
 #
-# for i in lista:
-#     print(i.getNombre(), i.getDescripcion(),i.getFoto())
-
+# GuardarCambios()

@@ -26,6 +26,7 @@ cursor.close()
 conexion_mysql.close()
 
 def EjecutarQuery(query,args):
+    print(query)
     error = "Exito!"
     try:
         conexion_mysql = mysql.connector.connect(**config_mysql)
@@ -38,7 +39,7 @@ def EjecutarQuery(query,args):
     finally:
         cursor.close()
         conexion_mysql.close()
-    #print(error)
+    print(error)
     return error
 
 def listar(nombreTabla):
@@ -118,12 +119,32 @@ def obtenerUsuarioBD():
     return listaUsuarios
 
 #************************************************
+def InsertarBD(nombreTabla,nombre,descripcion,foto):
+    query = ""
+    if (nombreTabla == "Animal"):
+        query = "Insert into Animal "
+    elif (nombreTabla == "Enfermedad"):
+        query = "Insert into Enfermedad "
+    elif (nombreTabla == "Medicamento"):
+        query = "Insert into Medicamento "
+    query += " VALUES (%s, %s, %s) "
+    args = (nombre,descripcion,foto)
+    return EjecutarQuery(query,args)
 
 def insertarUsuarioBD(login, contrasena, nombre, permiso,foto):
     #prepare update query and data
     query = "INSERT INTO usuario(login, contrasena, nombre, permiso, foto)VALUES(%s,%s,%s,%s,%s)"
-
     args = (login, contrasena, nombre, permiso,foto)
+    return EjecutarQuery(query, args)
+
+def InsertarDosisBD(id,animal,medicamento,enfermedad,minPeso,maxPeso,dosis):
+    query = "Insert into Dosis VALUES (%s, %s, %s, %s, %s, %s, %s) "
+    args = (id,animal,medicamento,enfermedad,minPeso,maxPeso,dosis)
+    return EjecutarQuery(query, args)
+
+def InsertarPrescripcionBD(id,usuario,animal,enfermedad,peso,idDosis):
+    query = "Insert into Prescripcion VALUES (%s, %s, %s, %s, %s, %s) "
+    args = (id,usuario,animal,enfermedad,peso,idDosis)
     return EjecutarQuery(query, args)
 
 def ModificarBD(nombretabla,nuevaDesc, nuevaFoto,nombre):
