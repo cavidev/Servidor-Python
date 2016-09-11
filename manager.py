@@ -85,7 +85,6 @@ def InsertarUsuario(request):
         foto = request.files['foto']
         valor = base64.b64encode(foto.getvalue())
         resultado = valor.decode('utf8')
-        print(resultado)
         nuevoObjeto.setFoto(resultado)
         listaUsuarios.append(nuevoObjeto)
         generalUsuarios.append(nuevoObjeto)
@@ -110,7 +109,8 @@ def InsertarManager(nombreTabla, request):
     valor = base64.b64encode(foto.getvalue())
     resultado = valor.decode('utf8')
     nuevoObjeto.setFoto(resultado)
-    # ---------------------------------------
+    if len(list(filter(lambda x: x.getNombre() == request.form['nombre'],generalAEM))):
+        return "¡¡ Ya existe algo con ese ID!!"
     listaAEM.append(nuevoObjeto)
     generalAEM.append(nuevoObjeto)
     return "¡¡ Se agrego a la lista: " + nuevoObjeto.getClase() + "=> " + nuevoObjeto.getNombre() + "!!"
@@ -243,6 +243,7 @@ def ModificarUsuario(request):
             list(map(lambda x: [x.setPassword(contra), x.setNombre(nombreCompleto), x.setPermiso(permiso),
                                 x.setFoto(resultado)] if x.getLogin() == usuario else ' ', generalUsuarios))
     return "Modificación exitosa!"
+
 
 def ModificarDosis(request):
     id = request.form['idDosis']
@@ -464,72 +465,24 @@ def EliminarPrescripcion(request):
 
 def GuardarCambios():
     global contador
-    list(map(lambda x: [InsertarBD(gAEM.__next__().getClase(),gAEM.__next__().getNombre(),
+    list(map(lambda x: [InsertarBD(gAEM.__next__().getClase(), gAEM.__next__().getNombre(),
                                   gAEM.__next__().getDescripcion(), gAEM.__next__().getFoto()),
-                                  AumentarContador()],range(len(listaAEM))))
+                                  AumentarContador()], range(len(listaAEM))))
     contador = 0
-    list(map(lambda x: [insertarUsuarioBD(gUsuarios.__next__().getLogin(),gUsuarios.__next__().getPassword(),
+    list(map(lambda x: [insertarUsuarioBD(gUsuarios.__next__().getLogin(), gUsuarios.__next__().getPassword(),
                                   gUsuarios.__next__().getNombre(), gUsuarios.__next__().getPermiso(),
-                                  gUsuarios.__next__().getFoto()),AumentarContador()],range(len(listaUsuarios))))
+                                  gUsuarios.__next__().getFoto()), AumentarContador()], range(len(listaUsuarios))))
     contador = 0
     list(map(lambda x: [InsertarDosisBD(gDosis.__next__().getID(), gDosis.__next__().getAnimal(),
                                   gDosis.__next__().getMedicamento(), gDosis.__next__().getEnfermedad(),
-                                  gDosis.__next__().getMinPeso(),gDosis.__next__().getMaxPeso(),
-                                  gDosis.__next__().getDosis()),AumentarContador()],range(len(listaDosis))))
+                                  gDosis.__next__().getMinPeso(), gDosis.__next__().getMaxPeso(),
+                                  gDosis.__next__().getDosis()), AumentarContador()], range(len(listaDosis))))
     contador = 0
     list(map(lambda x: [InsertarPrescripcionBD(gPresc.__next__().getID(), gPresc.__next__().getUsuario(),
                                               gPresc.__next__().getAnimal(), gPresc.__next__().getEnfermedad(),
-                                              gPresc.__next__().getPeso(), gPresc.__next__().getDosis()),AumentarContador()],
+                                              gPresc.__next__().getPeso(), gPresc.__next__().getDosis()), AumentarContador()],
                                               range(len(listaPrescripciones))))
     contador = 0
     CargarListasGenerales()
     LimpiarListasLocales()
-    print("Se han guardado todos los cambios! ")
-
-
-# u1 = Usuario()
-# u1.setLogin("Car")
-# u1.setPassword(123)
-# u1.setNombre("Carlos Villafuerte")
-# u1.setPermiso("admin")
-# u1.setFoto("assdadsa")
-# a1 = Animal()
-# a1.setNombre("Lobo")
-# a1.setDescripcion("Ladra")
-# a1.setFoto("asddsa")
-# a2 = Animal()
-# a2.setNombre("Leon")
-# a2.setDescripcion("Maulla")
-# a2.setFoto("dasasdd")
-# e1 = Enfermedad()
-# e1.setNombre("Distemper")
-# e1.setDescripcion("asdasdsa")
-# e1.setFoto("asddsaads")
-# m1 = Medicamento()
-# m1.setNombre("Paracetamol")
-# m1.setDescripcion("asddsa")
-# m1.setFoto("adasd")
-# d1 = Dosis()
-# d1.setID(4)
-# d1.setAnimal("Perro")
-# d1.setEnfermedad("Distemper")
-# d1.setMedicamento("Paracetamol")
-# d1.setRangoPeso(8,15)
-# d1.setDosis(13)
-# p1 = Prescripcion()
-# p1.setID(2)
-# p1.setUsuario("Car")
-# p1.setAnimal("Lobo")
-# p1.setEnfermedad("Distemper")
-# p1.setPeso(10)
-# p1.setDosis(4)
-# listaAEM.append(a1)
-# listaAEM.append(a2)
-# listaAEM.append(e1)
-# listaAEM.append(m1)
-# print(range(len(listaAEM)))
-# listaUsuarios.append(u1)
-# listaDosis.append(d1)
-# listaPrescripciones.append(p1)
-#
-# GuardarCambios()
+    return "¡¡ Se han guardado todos los cambios!! "
