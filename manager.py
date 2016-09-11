@@ -327,7 +327,7 @@ def obtenerUsuarioManager(login, contrasena):
 def ObtenerAEM(filtro):
     """Retorna una lista con los animales de toda la BD,
     usa una función lambda"""
-    lista = list(filter(lambda x: x.getClase() == filtro, listaAEM))
+    lista = list(filter(lambda x: x.getClase() == filtro, generalAEM))
     if 0 < len(lista):
         return lista
     else:
@@ -378,6 +378,12 @@ def ObternerFiltroDosis(request):
         else:
             return "error"
 
+def ObtenerDatosAEM(tipo,nombre):
+    lista = list(filter(lambda x: x.getClase() == tipo and x.getNombre() == nombre, generalAEM))
+    if 0 < len(lista):
+        return lista[0]
+    else:
+        return "error"
 
 def Eliminar(stringTabla, request):
     nombreAEM = request.form["nombre"]

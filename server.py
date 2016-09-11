@@ -332,8 +332,11 @@ def listarDosis():
         lista_Do_Ge.extend(listaResto)
         return render_template("vistasDeListados/listadoDosis.html", data=listaPri10, paginas=cantPag_Do_Fi_An)
 
-
-
+@app.route('/ObtenerAEM', methods=['GET', 'POST'])
+def ObtenerInfoAEM():
+    tipo = request.args.get('tipo')
+    objeto = ObtenerDatosAEM(tipo,request.args.get('nombre'))
+    return render_template("vistasDeListados/datosAEM.html", tipo = tipo, objeto = objeto )
 
 
 

@@ -19,36 +19,46 @@
         </form>
     </div>
     <div>
-    <table class="table">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Animal</th>
-                <th>Medicamentos</th>
-                <th>Enfermedad</th>
-                <th>Rango</th>
-                <th>Dosis</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% if data != "error" %}
-                {% for item in data %}
+        <form action="{{ url_for('ObtenerInfoAEM') }}" method="post" class="form-horizontal">
+            <table class="table">
+                <thead>
                     <tr>
-                        <td>{{ item.getID() }}</td>
-                        <td>{{ item.getAnimal() }}</td>
-                        <td>{{ item.getMedicamento() }}</td>
-                        <td>{{ item.getEnfermedad() }}</td>
-                        <td>{{ item.getMinPeso()+"/"+item.getMaxPeso() }}</td>
-                        <td>{{ item.getDosis() }}</td>
+                        <th>ID</th>
+                        <th>Animal</th>
+                        <th>Medicamento</th>
+                        <th>Enfermedad</th>
+                        <th>Peso Mínimo</th>
+                        <th>Peso Máximo</th>
+                        <th>Dosis</th>
                     </tr>
-                {% endfor %}
-            {% else %}
-                <tr>
-                    <td>¡¡ Peligro NO hay datos !!</td>
-                </tr>
-            {% endif %}
-        </tbody>
-    </table>
+                </thead>
+                <tbody>
+                    {% if data != "error" %}
+                        {% for item in data %}
+                            <tr>
+                                <td>{{ item.getID() }}</td>
+                                <td>
+                                    <a href="http://127.0.0.1:5000/ObtenerAEM?tipo=Animal&nombre={{ item.getAnimal() }}">{{ item.getAnimal() }}</a>
+                                </td>
+                                <td>
+                                    <a href="http://127.0.0.1:5000/ObtenerAEM?tipo=Medicamento&nombre={{ item.getMedicamento() }}">{{ item.getMedicamento() }}</a>
+                                </td>
+                                <td>
+                                    <a href="http://127.0.0.1:5000/ObtenerAEM?tipo=Enfermedad&nombre={{ item.getEnfermedad() }}">{{ item.getEnfermedad() }}</a>
+                                </td>
+                                <td>{{ item.getMinPeso() }}</td>
+                                <td>{{ item.getMaxPeso() }}</td>
+                                <td>{{ item.getDosis() }}</td>
+                            </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td>¡¡ Peligro NO hay datos !!</td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </form>
     </div>
     <div style="margin-left: 475px" >
         {% if paginas %}
