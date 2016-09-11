@@ -219,8 +219,9 @@ def Modificar(stringTabla, request):
             list(map(lambda x: [x.setDescripcion(nuevaDesc),
                                 x.setFoto(nuevaFoto)] if x.getClase() == stringTabla and x.getNombre() == nombre else ' ',
                                 generalAEM))
+            return "¡¡ Se modifico con exito!!"
 
-
+#No lo he hecho
 def ModificarUsuario(request):
     usuario = request.form["usuario"]
     contra = request.form['contrasena']
@@ -383,24 +384,24 @@ def Eliminar(stringTabla, request):
     global listaAEM
     global generalAEM
     tempDosis = list(filter(lambda x: x.getAnimal() == nombreAEM
-        or x.getMedicamento() == nombreAEM or x.getEnfermedad() == nombreAEM,generalDosis))
-    if (len(tempDosis) >0):
-        print("No se puede eliminar ese elemento, pues está asociado a una dosis.")
+        or x.getMedicamento() == nombreAEM or x.getEnfermedad() == nombreAEM, generalDosis))
+    if (len(tempDosis) > 0):
+        return "¡¡ No se puede eliminar ese elemento, pues está asociado a una dosis. !!"
     else:
         tempCantidad = len(listaAEM)
-        listaAEM = list(filter(lambda x: not(x.getNombre() == nombreAEM and x.getClase() == stringTabla),listaAEM))
-        if (len(listaAEM == tempCantidad)):
+        listaAEM = list(filter(lambda x: not(x.getNombre() == nombreAEM and x.getClase() == stringTabla), listaAEM))
+        if len(listaAEM) == tempCantidad:#Mae esta no va afuera de los parentesis? len(listaAEM == tempCantidad)
             #No cambio la lista temporal, toca buscar en la BD
-            resultadoQ = EliminarBD(stringTabla,nombreAEM)
+            resultadoQ = EliminarBD(stringTabla, nombreAEM)
             if resultadoQ == 0:
-                print("No se realizó ningun cambio, compruebe los datos")
+                return "¡¡ No se realizó ningun cambio, compruebe los datos !!"
             else:
                 generalAEM = list(
                     filter(lambda x: not (x.getNombre() == nombreAEM and x.getClase() == stringTabla), generalAEM))
         else:
-            generalAEM = list(filter(lambda x: not(x.getNombre() == nombreAEM and x.getClase() == stringTabla),generalAEM))
+            generalAEM = list(filter(lambda x: not(x.getNombre() == nombreAEM and x.getClase() == stringTabla), generalAEM))
 
-
+#no lo he hecho
 def EliminarUsuario(request):
     usuario = request.form["usuario"]
     global listaUsuarios

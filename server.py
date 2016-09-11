@@ -124,14 +124,11 @@ def agregar():
             return render_template("usuarioAdmin/usuarioAdmi.html", usuario=usuarioAdentro, suceso="Se modifico: ")
         elif opcion == "eliminar":
             if categoria == "Medicamento":
-                print("Eliminar")
-                #EliminarManager(Medicamento, request)
+                suceso = Eliminar("Medicamento",request)
             elif categoria == "Animal":
-                print("Eliminar")
-                #EliminarManager(Animal, request)
+                suceso = Eliminar("Animal", request)
             elif categoria == "Enfermedad":
-                print("Eliminar")
-                #EliminarManager(Enfermedad, request)
+                suceso = Eliminar("Enfermedad", request)
             return render_template("usuarioAdmin/usuarioAdmi.html", usuario=usuarioAdentro, suceso="Se elimino: ")
 
 
@@ -144,7 +141,7 @@ def agregarDosis():
     elif opcion == "modificar":
         ModificarDosis(request)
     elif opcion == "eliminar":
-        print("Eliminar")
+        EliminarDosis(request)
     return render_template("usuarioAdmin/usuarioAdmi.html", usuario=usuarioAdentro, suceso=suceso)
 
 
@@ -162,7 +159,7 @@ def agregarPrescripcion():
         elif opcion == "modificar":
             ModificarPrescripcion(request)
         elif opcion == "eliminar":
-            print("Eliminar")
+            EliminarPrescripcion(request)
         return render_template("usuarioAdmin/usuarioAdmi.html", usuario=usuarioAdentro, suceso=suceso)
     else:
         animal = request.form['animal']
