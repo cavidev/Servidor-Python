@@ -282,11 +282,11 @@ def ModificarUsuario(request):
     else:
         resultadoQ = ModificarUsuarioBD(contra,nombreCompleto,permiso,resultado,usuario)
         if resultadoQ == 0:
-            print("No se encontró el elemento solicitado")
+            return "No hubieron cambios, datos incorrectos o repetidos."
         else:
             list(map(lambda x: [x.setPassword(contra), x.setNombre(nombreCompleto), x.setPermiso(permiso),
                                 x.setFoto(resultado)] if x.getLogin() == usuario else ' ', generalUsuarios))
-
+    return "Modificación exitosa!"
 
 def ModificarDosis(request):
     id = request.form['idDosis']
@@ -361,7 +361,7 @@ def Eliminar(stringTabla, request):
     else:
         tempCantidad = len(listaAEM)
         listaAEM = list(filter(lambda x: not(x.getNombre() == nombreAEM and x.getClase() == stringTabla),listaAEM))
-        if (len(listaAEM == tempCantidad)):
+        if (len(listaAEM) == tempCantidad):
             #No cambio la lista temporal, toca buscar en la BD
             resultadoQ = EliminarBD(stringTabla,nombreAEM)
             if resultadoQ == 0:
@@ -378,19 +378,20 @@ def EliminarUsuario(request):
     global generalUsuarios
     tempPresc = list(filter(lambda x: x.getUsuario() == usuario,generalPrescripciones))
     if len(tempPresc) > 0:
-        print("No se puede eliminar el usuario, ya que está asociado a alguna prescripción")
+        return "No se puede eliminar el usuario, ya que está asociado a alguna prescripción"
     else:
         tempCantidad = len(listaUsuarios)
         listaUsuarios = list(filter(lambda x: x.getLogin() == usuario, listaAEM))
-        if (len(listaAEM == tempCantidad)):
+        if (len(listaAEM) == tempCantidad):
             # No cambio la lista temporal, toca buscar en la BD
             resultadoQ = EliminarUsuarioBD(usuario)
             if resultadoQ == 0:
-                print("No se realizó ningun cambio, compruebe los datos")
+                return "No se realizó ningun cambio, compruebe los datos"
             else:
                 generalUsuarios = list(filter(lambda x: x.getLogin() == usuario, generalUsuarios))
         else:
             generalUsuarios = list(filter(lambda x: x.getLogin() == usuario, generalUsuarios))
+    return "El usuario "+ usuario + " se eliminó exitosamente"
 
 def EliminarDosis(request):
     idDosis = request.form['idDosis']
@@ -402,7 +403,7 @@ def EliminarDosis(request):
     else:
         tempCantidad = len(listaDosis)
         listaDosis = list(filter(lambda x: x.getID() == idDosis, listaDosis))
-        if (len(listaDosis == tempCantidad)):
+        if (len(listaDosis) == tempCantidad):
             # No cambio la lista temporal, toca buscar en la BD
             resultadoQ = EliminarDosisBD(idDosis)
             if resultadoQ == 0:
@@ -418,7 +419,7 @@ def EliminarPrescripcion(request):
     global generalPrescripciones
     tempCantidad = len(listaPrescripciones)
     listaPrescripciones = list(filter(lambda x: x.getID() == idPresc, listaPrescripciones))
-    if (len(listaPrescripciones == tempCantidad)):
+    if (len(listaPrescripciones) == tempCantidad):
         # No cambio la lista temporal, toca buscar en la BD
         resultadoQ = EliminarPrescripcionBD(idPresc)
         if resultadoQ == 0:

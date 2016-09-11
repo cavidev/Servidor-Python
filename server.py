@@ -65,23 +65,30 @@ def allowed_file(filename):
 
 @app.route('/registerUser', methods=['GET', 'POST'])
 def registerUser():
-    """Obtiene los datos de un usuario nuevo, llama a metodos de manager
-    para guardarlos en la lista hasta que este listo para insertarse en la BD."""
-    if 'foto' not in request.files:
-        render_template("login.html", suceso="¡¡ No subio la foto !!")
-    # nombreCompleto = request.form['nombreCompleto']
-    # usuario = request.form['usuario']
-    # contrasena = request.form['contrasena']
-    # permiso = request.form['permiso']
-    foto = request.files['foto']
-    # valor = base64.b64encode(foto.getvalue())
-    # resultado = valor.decode('utf8')
-    if foto.filename == '':
-        render_template("login.html", suceso="¡¡ No subio la foto !!")
-    if foto and allowed_file(foto.filename):
-         filename = secure_filename(foto.filename)
-         # InsertarUsuarioManager1(usuario, contrasena, nombreCompleto, permiso, resultado)
-         suceso = InsertarUsuario(request)#Retorna lo que paso!
+    suceso = ""
+    opcion = request.form["submit"]
+    if opcion == "modificar":
+        suceso = ModificarUsuario(request)
+    elif opcion == "eliminar":
+        suceso = EliminarUsuario(request)
+    else:
+        """Obtiene los datos de un usuario nuevo, llama a metodos de manager
+        para guardarlos en la lista hasta que este listo para insertarse en la BD."""
+        if 'foto' not in request.files:
+            render_template("login.html", suceso="¡¡ No subio la foto !!")
+        # nombreCompleto = request.form['nombreCompleto']
+        # usuario = request.form['usuario']
+        # contrasena = request.form['contrasena']
+        # permiso = request.form['permiso']
+        foto = request.files['foto']
+        # valor = base64.b64encode(foto.getvalue())
+        # resultado = valor.decode('utf8')
+        if foto.filename == '':
+            render_template("login.html", suceso="¡¡ No subio la foto !!")
+        if foto and allowed_file(foto.filename):
+             filename = secure_filename(foto.filename)
+             # InsertarUsuarioManager1(usuario, contrasena, nombreCompleto, permiso, resultado)
+             suceso = InsertarUsuario(request)#Retorna lo que paso!
     return render_template("login.html", suceso=suceso)
 
 
