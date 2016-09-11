@@ -1,0 +1,63 @@
+{% extends "vistasDeListados/layout.html" %}
+{% block body %}
+<div class="container">
+    <h2>Lista de Dosis</h2>
+    <p>Listado de dosis, se puede hacer filtros por medio de los botones de la derecha</p>
+    <div style="float: right">
+        <form action="{{ url_for('listarDosis') }}" method="post" class="form-horizontal">
+            <div class="form-group">
+                <div class="col-md-30">
+                    <input type="text" class="form-control" name="pedido" placeholder="Enfermedad/Animal">
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-17">
+                    <button type="submit" name="submit" value="Animal" class="btoFiltro">Animal</button>
+                    <button type="submit" name="submit" value="Enfermedad" class="btoFiltro">Enferm</button>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Animal</th>
+                <th>Medicamentos</th>
+                <th>Enfermedad</th>
+                <th>Rango</th>
+                <th>Dosis</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if data != "error" %}
+                {% for item in data %}
+                    <tr>
+                        <td>{{ item.getID() }}</td>
+                        <td>{{ item.getAnimal() }}</td>
+                        <td>{{ item.getMedicamento() }}</td>
+                        <td>{{ item.getEnfermedad() }}</td>
+                        <td>{{ item.getMinPeso()+"/"+item.getMaxPeso() }}</td>
+                        <td>{{ item.getDosis() }}</td>
+                    </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td>¡¡ Peligro NO hay datos !!</td>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
+    </div>
+    <div style="margin-left: 475px" >
+        {% if paginas %}
+            <ul class="pagination">
+                {% for num in range(1,paginas) %}
+                    <li><a href="listarDosis">{{ num }}</a></li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

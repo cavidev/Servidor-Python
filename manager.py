@@ -109,7 +109,6 @@ def InsertarManager(nombreTabla, request):
     foto = request.files['foto']
     valor = base64.b64encode(foto.getvalue())
     resultado = valor.decode('utf8')
-    print(resultado)
     nuevoObjeto.setFoto(resultado)
     # ---------------------------------------
     listaAEM.append(nuevoObjeto)
@@ -195,51 +194,6 @@ def InsertarPrescripcion(request):
             return "¡¡ Se inserto con exito !!"
 
 
-def obtenerUsuarioManager(login, contrasena):
-    """Obtien el usuario que se esta logeando,
-    Parametros:
-        login: Nombre de usuario
-        contrasena: La contraseña del usuario.
-    Returns:
-        Usuario if encuentra else estado de la busqueda."""
-    listaUsuario = obtenerUsuarioBD()
-    listaGenerada = list(filter(lambda x: x.getLogin() == login and x.getPassword() == contrasena, listaUsuario))
-    if 0 < len(listaGenerada):
-        return listaGenerada[0]
-    else:
-        return "error"
-
-
-def ObtenerAnimales():
-    """Retorna una lista con los animales de toda la BD,
-    usa una función lambda"""
-    lista = list(filter(lambda x: x.getClase() == "Animal", listaAEM))
-    if 0 < len(lista):
-        return lista
-    else:
-        return "error"
-
-
-def ObternerMedicamentos():
-    """Retorna una lista con los medicamentos de toda la BD,
-    usa una función lambda"""
-    lista = list(filter(lambda x: x.getClase() == "Medicamento", listaAEM))
-    if 0 < len(lista):
-        return "error"
-    else:
-        return lista
-
-
-def ObtenerEnfermedad():
-    """Retorna una lista con los animales de toda la BD,
-    usa una función lambda"""
-    lista = list(filter(lambda x: x.getClase() == "Enfermedad", listaAEM))
-    if 0 < len(lista):
-        return "error"
-    else:
-        return lista
-
-
 def InsertarUsuarioManager1(login, password, nombre, permiso, foto):
     'Inserta el usuario directamente en la BD.'
     return insertarUsuarioBD(login, password, nombre, permiso, foto)
@@ -258,14 +212,16 @@ def Modificar(stringTabla, request):
                             x.setFoto(nuevaFoto)] if x.getClase() == stringTabla and x.getNombre() == nombre else ' ',
                  generalAEM))
     else:
-        resultadoQ = ModificarBD(stringTabla,nuevaDesc,nuevaFoto,nombre)
+        resultadoQ = ModificarBD(stringTabla, nuevaDesc, nuevaFoto, nombre)
         if resultadoQ == 0:
-            print("No se encontró el elemento solicitado")
+            return "¡¡ No se encontró el elemento solicitado !!"
         else:
             list(map(lambda x: [x.setDescripcion(nuevaDesc),
                                 x.setFoto(nuevaFoto)] if x.getClase() == stringTabla and x.getNombre() == nombre else ' ',
                                 generalAEM))
+            return "¡¡ Se modifico con exito!!"
 
+#No lo he hecho
 def ModificarUsuario(request):
     usuario = request.form["usuario"]
     contra = request.form['contrasena']
@@ -318,6 +274,7 @@ def ModificarDosis(request):
                                     x.setRangoPeso(minPeso, maxPeso), x.setDosis(dosis)]
                                     if x.getID() == id else ' ', generalDosis))
 
+
 def ModificarPrescripcion(request):
     id = request.form['idPrescripcion']
     usuario = request.form['usuario']
@@ -350,28 +307,101 @@ def ModificarPrescripcion(request):
                                     x.setPeso(peso), x.setDosis(idDosis)]
                                     if x.getID() == id else ' ', generalPrescripciones))
 
+
+def obtenerUsuarioManager(login, contrasena):
+    """Obtien el usuario que se esta logeando,
+    Parametros:
+        login: Nombre de usuario
+        contrasena: La contraseña del usuario.
+    Returns:
+        Usuario if encuentra else estado de la busqueda."""
+    listaUsuario = obtenerUsuarioBD()
+    listaGenerada = list(
+        filter(lambda x: x.getLogin() == login and x.getPassword() == contrasena, listaUsuario))
+    if 0 < len(listaGenerada):
+        return listaGenerada[0]
+    else:
+        return "error"
+
+
+def ObtenerAEM(filtro):
+    """Retorna una lista con los animales de toda la BD,
+    usa una función lambda"""
+    lista = list(filter(lambda x: x.getClase() == filtro, listaAEM))
+    if 0 < len(lista):
+        return lista
+    else:
+        return "error"
+
+
+def ObtenerIdDosis(request):
+    animal = request.form['animal']
+    enfermedad = request.form['enfermedad']
+    peso = request.form['peso']
+    listaTemp = list(filter(lambda x: x.getAnimal() == animal and x.getEnfermedad() == enfermedad
+                            and (x.getMinPeso() <= peso < x.getMaxPeso()), listaDosis))
+    if len(listaTemp) > 0:
+        return listaTemp
+    else:
+        return "error"
+
+
+def ObtenerDosis():
+    if len(generalDosis) > 0:
+        return generalDosis
+    else:
+        return "error"
+
+
+def ObtenerPrescripcion():
+    if len(generalPrescripciones) > 0:
+        return generalPrescripciones
+    else:
+        return "error"
+
+
+def ObternerFiltroDosis(request):
+    pedido = request.form['pedido']
+    opcion = request.form['submit']
+    if "Animal" == opcion:
+        lista = list(filter(lambda x: x.getAnimal() == pedido, generalDosis))
+        print("Manager")
+        print(lista)
+        if len(lista) > 0:
+            return lista
+        else:
+            return "error"
+    else:
+        lista = list(filter(lambda x: x.getEnfermedad() == pedido, generalDosis))
+        if len(lista) > 0:
+            return lista
+        else:
+            return "error"
+
+
 def Eliminar(stringTabla, request):
     nombreAEM = request.form["nombre"]
     global listaAEM
     global generalAEM
     tempDosis = list(filter(lambda x: x.getAnimal() == nombreAEM
-        or x.getMedicamento() == nombreAEM or x.getEnfermedad() == nombreAEM,generalDosis))
-    if (len(tempDosis) >0):
-        print("No se puede eliminar ese elemento, pues está asociado a una dosis.")
+        or x.getMedicamento() == nombreAEM or x.getEnfermedad() == nombreAEM, generalDosis))
+    if (len(tempDosis) > 0):
+        return "¡¡ No se puede eliminar ese elemento, pues está asociado a una dosis. !!"
     else:
         tempCantidad = len(listaAEM)
         listaAEM = list(filter(lambda x: not(x.getNombre() == nombreAEM and x.getClase() == stringTabla),listaAEM))
         if (len(listaAEM) == tempCantidad):
             #No cambio la lista temporal, toca buscar en la BD
-            resultadoQ = EliminarBD(stringTabla,nombreAEM)
+            resultadoQ = EliminarBD(stringTabla, nombreAEM)
             if resultadoQ == 0:
-                print("No se realizó ningun cambio, compruebe los datos")
+                return "¡¡ No se realizó ningun cambio, compruebe los datos !!"
             else:
                 generalAEM = list(
                     filter(lambda x: not (x.getNombre() == nombreAEM and x.getClase() == stringTabla), generalAEM))
         else:
-            generalAEM = list(filter(lambda x: not(x.getNombre() == nombreAEM and x.getClase() == stringTabla),generalAEM))
+            generalAEM = list(filter(lambda x: not(x.getNombre() == nombreAEM and x.getClase() == stringTabla), generalAEM))
 
+#no lo he hecho
 def EliminarUsuario(request):
     usuario = request.form["usuario"]
     global listaUsuarios
@@ -393,6 +423,7 @@ def EliminarUsuario(request):
             generalUsuarios = list(filter(lambda x: x.getLogin() == usuario, generalUsuarios))
     return "El usuario "+ usuario + " se eliminó exitosamente"
 
+
 def EliminarDosis(request):
     idDosis = request.form['idDosis']
     global listaDosis
@@ -413,6 +444,7 @@ def EliminarDosis(request):
         else:
             generalDosis = list(filter(lambda x: x.getID() == idDosis, generalDosis))
 
+
 def EliminarPrescripcion(request):
     idPresc = request.form['idPrescripcion']
     global listaPrescripciones
@@ -428,6 +460,7 @@ def EliminarPrescripcion(request):
             generalPrescripciones = list(filter(lambda x: x.getID() == idPresc, generalPrescripciones))
     else:
         generalPrescripciones = list(filter(lambda x: x.getID() == idPresc, generalPrescripciones))
+
 
 def GuardarCambios():
     global contador
@@ -452,6 +485,7 @@ def GuardarCambios():
     CargarListasGenerales()
     LimpiarListasLocales()
     print("Se han guardado todos los cambios! ")
+
 
 # u1 = Usuario()
 # u1.setLogin("Car")
