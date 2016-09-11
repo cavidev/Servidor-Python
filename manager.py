@@ -304,6 +304,85 @@ def ModificarPrescripcion(request):
                                     x.setPeso(peso), x.setDosis(idDosis)]
                                     if x.getID() == id else ' ', generalPrescripciones))
 
+def Eliminar(stringTabla, request):
+    nombreAEM = request.form["nombre"]
+    global listaAEM
+    global generalAEM
+    tempDosis = list(filter(lambda x: x.getAnimal() == nombreAEM
+        or x.getMedicamento() == nombreAEM or x.getEnfermedad() == nombreAEM,generalDosis))
+    if (len(tempDosis) >0):
+        print("No se puede eliminar ese elemento, pues está asociado a una dosis.")
+    else:
+        tempCantidad = len(listaAEM)
+        listaAEM = list(filter(lambda x: not(x.getNombre() == nombreAEM and x.getClase() == stringTabla),listaAEM))
+        if (len(listaAEM == tempCantidad)):
+            #No cambio la lista temporal, toca buscar en la BD
+            resultadoQ = EliminarBD(stringTabla,nombreAEM)
+            if resultadoQ == 0:
+                print("No se realizó ningun cambio, compruebe los datos")
+            else:
+                generalAEM = list(
+                    filter(lambda x: not (x.getNombre() == nombreAEM and x.getClase() == stringTabla), generalAEM))
+        else:
+            generalAEM = list(filter(lambda x: not(x.getNombre() == nombreAEM and x.getClase() == stringTabla),generalAEM))
+
+def EliminarUsuario(request):
+    usuario = request.form["usuario"]
+    global listaUsuarios
+    global generalUsuarios
+    tempPresc = list(filter(lambda x: x.getUsuario() == usuario,generalPrescripciones))
+    if len(tempPresc) > 0:
+        print("No se puede eliminar el usuario, ya que está asociado a alguna prescripción")
+    else:
+        tempCantidad = len(listaUsuarios)
+        listaUsuarios = list(filter(lambda x: x.getLogin() == usuario, listaAEM))
+        if (len(listaAEM == tempCantidad)):
+            # No cambio la lista temporal, toca buscar en la BD
+            resultadoQ = EliminarUsuarioBD(usuario)
+            if resultadoQ == 0:
+                print("No se realizó ningun cambio, compruebe los datos")
+            else:
+                generalUsuarios = list(filter(lambda x: x.getLogin() == usuario, generalUsuarios))
+        else:
+            generalUsuarios = list(filter(lambda x: x.getLogin() == usuario, generalUsuarios))
+
+def EliminarDosis(request):
+    idDosis = request.form['idDosis']
+    global listaDosis
+    global generalDosis
+    tempPresc = list(filter(lambda x: x.getDosis() == idDosis, generalPrescripciones))
+    if len(tempPresc) > 0:
+        print("No se puede eliminar la dosis, ya que está asociada a alguna prescripción")
+    else:
+        tempCantidad = len(listaDosis)
+        listaDosis = list(filter(lambda x: x.getID() == idDosis, listaDosis))
+        if (len(listaDosis == tempCantidad)):
+            # No cambio la lista temporal, toca buscar en la BD
+            resultadoQ = EliminarDosisBD(idDosis)
+            if resultadoQ == 0:
+                print("No se realizó ningun cambio, compruebe los datos")
+            else:
+                generalDosis = list(filter(lambda x: x.getID() == idDosis, generalDosis))
+        else:
+            generalDosis = list(filter(lambda x: x.getID() == idDosis, generalDosis))
+
+def EliminarPrescripcion(request):
+    idPresc = request.form['idPrescripcion']
+    global listaPrescripciones
+    global generalPrescripciones
+    tempCantidad = len(listaPrescripciones)
+    listaPrescripciones = list(filter(lambda x: x.getID() == idPresc, listaPrescripciones))
+    if (len(listaPrescripciones == tempCantidad)):
+        # No cambio la lista temporal, toca buscar en la BD
+        resultadoQ = EliminarPrescripcionBD(idPresc)
+        if resultadoQ == 0:
+            print("No se realizó ningun cambio, compruebe los datos")
+        else:
+            generalPrescripciones = list(filter(lambda x: x.getID() == idPresc, generalPrescripciones))
+    else:
+        generalPrescripciones = list(filter(lambda x: x.getID() == idPresc, generalPrescripciones))
+
+
 # lista = []
 # a1 = Animal()
 # a1.setNombre("Perro")
