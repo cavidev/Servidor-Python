@@ -169,7 +169,6 @@ def InsertarPrescripcion(request):
     animal = request.form['animal']
     enfermedad = request.form['enfermedad']
     idDosis = request.form['idDosis']
-
     if len(list(filter(lambda x: x.getID() == id, generalPrescripciones))) > 0:
         return "¡¡ Ya existe una prescripcion con esa ID !!"
     else:
@@ -177,8 +176,7 @@ def InsertarPrescripcion(request):
                                         (x.getClase() == "Enfermedad" and x.getNombre() == enfermedad)
                               , generalAEM))
         tempUsuario = list(filter(lambda y: y.getLogin() == usuario, generalUsuarios))
-        tempDosis = list(filter(lambda z: z.getID() == idDosis, generalDosis))
-
+        tempDosis = list(filter(lambda z: str(z.getID()) == idDosis, generalDosis))
         if len(tempAEM) != 2 or len(tempUsuario) != 1 or len(tempDosis) != 1:
             return "¡¡ No se encontraron los datos solicitados !!"
         else:
@@ -219,9 +217,9 @@ def Modificar(stringTabla, request):
             list(map(lambda x: [x.setDescripcion(nuevaDesc),
                                 x.setFoto(nuevaFoto)] if x.getClase() == stringTabla and x.getNombre() == nombre else ' ',
                                 generalAEM))
-            return "¡¡ Se modifico con exito!!"
+        return "¡¡ Se modifico con exito!!"
 
-#No lo he hecho
+
 def ModificarUsuario(request):
     usuario = request.form["usuario"]
     contra = request.form['contrasena']
@@ -260,21 +258,21 @@ def ModificarDosis(request):
         return "¡¡ Verifique el animal, medicamento o enfermedad !!"
     else:
         if len(list(filter(lambda x: x.getID() == id, listaDosis))) > 0:
-            list(map(lambda x: [x.setAnimal(animal), x.setMedicamento(medicamento), x.setEnfemedad(enfermedad),
+            list(map(lambda x: [x.setAnimal(animal), x.setMedicamento(medicamento), x.setEnfermedad(enfermedad),
                                 x.setRangoPeso(minPeso,maxPeso), x.setDosis(dosis)]
                                 if x.getID() == id else ' ', listaDosis))
-            list(map(lambda x: [x.setAnimal(animal), x.setMedicamento(medicamento), x.setEnfemedad(enfermedad),
+            list(map(lambda x: [x.setAnimal(animal), x.setMedicamento(medicamento), x.setEnfermedad(enfermedad),
                                 x.setRangoPeso(minPeso, maxPeso), x.setDosis(dosis)]
                                 if x.getID() == id else ' ', generalDosis))
         else:
             resultadoQ = ModificarDosisBD(animal,medicamento,enfermedad,minPeso,maxPeso,dosis,id)
             if resultadoQ == 0:
-                print("No se encontró el elemento solicitado")
+                return "No se encontró el elemento solicitado"
             else:
-                list(map(lambda x: [x.setAnimal(animal), x.setMedicamento(medicamento), x.setEnfemedad(enfermedad),
+                list(map(lambda x: [x.setAnimal(animal), x.setMedicamento(medicamento), x.setEnfermedad(enfermedad),
                                     x.setRangoPeso(minPeso, maxPeso), x.setDosis(dosis)]
                                     if x.getID() == id else ' ', generalDosis))
-
+    return "Modificación exitosa!"
 
 def ModificarPrescripcion(request):
     id = request.form['idPrescripcion']
@@ -287,16 +285,16 @@ def ModificarPrescripcion(request):
                                     (x.getClase() == "Enfermedad" and x.getNombre() == enfermedad)
                                     , generalAEM))
     tempUsuario = list(filter(lambda y: y.getLogin() == usuario, generalUsuarios))
-    tempDosis = list(filter(lambda z: z.getID() == idDosis, generalDosis))
+    tempDosis = list(filter(lambda z: str(z.getID()) == idDosis, generalDosis))
 
     if len(tempAEM) != 2 or len(tempUsuario) != 1 or len(tempDosis) != 1:
         return "¡¡ No se encontraron los datos solicitados !!"
     else:
         if len(list(filter(lambda x: x.getID() == id, generalPrescripciones))) > 0:
-            list(map(lambda x: [x.setUsuario(usuario),x.setAnimal(animal),x.setEnfemedad(enfermedad),
+            list(map(lambda x: [x.setUsuario(usuario),x.setAnimal(animal),x.setEnfermedad(enfermedad),
                                 x.setPeso(peso),x.setDosis(idDosis)]
                                 if x.getID() == id else ' ', listaPrescripciones))
-            list(map(lambda x: [x.setUsuario(usuario), x.setAnimal(animal), x.setEnfemedad(enfermedad),
+            list(map(lambda x: [x.setUsuario(usuario), x.setAnimal(animal), x.setEnfermedad(enfermedad),
                                 x.setPeso(peso), x.setDosis(idDosis)]
                                 if x.getID() == id else ' ', generalPrescripciones))
         else:
@@ -304,10 +302,10 @@ def ModificarPrescripcion(request):
             if resultadoQ == 0:
                 print("No se encontró el elemento solicitado")
             else:
-                list(map(lambda x: [x.setUsuario(usuario), x.setAnimal(animal), x.setEnfemedad(enfermedad),
+                list(map(lambda x: [x.setUsuario(usuario), x.setAnimal(animal), x.setEnfermedad(enfermedad),
                                     x.setPeso(peso), x.setDosis(idDosis)]
                                     if x.getID() == id else ' ', generalPrescripciones))
-
+    return "Modificación exitosa!"
 
 def obtenerUsuarioManager(login, contrasena):
     """Obtien el usuario que se esta logeando,
@@ -340,7 +338,7 @@ def ObtenerIdDosis(request):
     enfermedad = request.form['enfermedad']
     peso = request.form['peso']
     listaTemp = list(filter(lambda x: x.getAnimal() == animal and x.getEnfermedad() == enfermedad
-                            and (x.getMinPeso() <= peso < x.getMaxPeso()), listaDosis))
+                            and (int(x.getMinPeso()) <= int(peso) < int(x.getMaxPeso())), generalDosis))
     if len(listaTemp) > 0:
         return listaTemp
     else:
@@ -366,8 +364,6 @@ def ObternerFiltroDosis(request):
     opcion = request.form['submit']
     if "Animal" == opcion:
         lista = list(filter(lambda x: x.getAnimal() == pedido, generalDosis))
-        print("Manager")
-        print(lista)
         if len(lista) > 0:
             return lista
         else:
@@ -379,6 +375,12 @@ def ObternerFiltroDosis(request):
         else:
             return "error"
 
+def ObtenerDatosAEM(tipo,nombre):
+    lista = list(filter(lambda x: x.getClase() == tipo and x.getNombre() == nombre, generalAEM))
+    if 0 < len(lista):
+        return lista[0]
+    else:
+        return "error"
 
 def Eliminar(stringTabla, request):
     nombreAEM = request.form["nombre"]
@@ -401,6 +403,7 @@ def Eliminar(stringTabla, request):
                     filter(lambda x: not (x.getNombre() == nombreAEM and x.getClase() == stringTabla), generalAEM))
         else:
             generalAEM = list(filter(lambda x: not(x.getNombre() == nombreAEM and x.getClase() == stringTabla), generalAEM))
+    return "Se eliminó con éxito"
 
 #no lo he hecho
 def EliminarUsuario(request):
@@ -412,16 +415,16 @@ def EliminarUsuario(request):
         return "No se puede eliminar el usuario, ya que está asociado a alguna prescripción"
     else:
         tempCantidad = len(listaUsuarios)
-        listaUsuarios = list(filter(lambda x: x.getLogin() == usuario, listaAEM))
+        listaUsuarios = list(filter(lambda x: x.getLogin() != usuario, listaAEM))
         if (len(listaAEM) == tempCantidad):
             # No cambio la lista temporal, toca buscar en la BD
             resultadoQ = EliminarUsuarioBD(usuario)
             if resultadoQ == 0:
                 return "No se realizó ningun cambio, compruebe los datos"
             else:
-                generalUsuarios = list(filter(lambda x: x.getLogin() == usuario, generalUsuarios))
+                generalUsuarios = list(filter(lambda x: x.getLogin() != usuario, generalUsuarios))
         else:
-            generalUsuarios = list(filter(lambda x: x.getLogin() == usuario, generalUsuarios))
+            generalUsuarios = list(filter(lambda x: x.getLogin() != usuario, generalUsuarios))
     return "El usuario "+ usuario + " se eliminó exitosamente"
 
 
@@ -431,36 +434,37 @@ def EliminarDosis(request):
     global generalDosis
     tempPresc = list(filter(lambda x: x.getDosis() == idDosis, generalPrescripciones))
     if len(tempPresc) > 0:
-        print("No se puede eliminar la dosis, ya que está asociada a alguna prescripción")
+        return "No se puede eliminar la dosis, ya que está asociada a alguna prescripción"
     else:
         tempCantidad = len(listaDosis)
-        listaDosis = list(filter(lambda x: x.getID() == idDosis, listaDosis))
+        listaDosis = list(filter(lambda x: x.getID() != idDosis, listaDosis))
         if (len(listaDosis) == tempCantidad):
             # No cambio la lista temporal, toca buscar en la BD
             resultadoQ = EliminarDosisBD(idDosis)
             if resultadoQ == 0:
-                print("No se realizó ningun cambio, compruebe los datos")
+                return "No se realizó ningun cambio, compruebe los datos"
             else:
-                generalDosis = list(filter(lambda x: x.getID() == idDosis, generalDosis))
+                generalDosis = list(filter(lambda x: x.getID() != idDosis, generalDosis))
         else:
-            generalDosis = list(filter(lambda x: x.getID() == idDosis, generalDosis))
-
+            generalDosis = list(filter(lambda x: x.getID() != idDosis, generalDosis))
+        return "Se eliminó exitosamente"
 
 def EliminarPrescripcion(request):
     idPresc = request.form['idPrescripcion']
     global listaPrescripciones
     global generalPrescripciones
     tempCantidad = len(listaPrescripciones)
-    listaPrescripciones = list(filter(lambda x: x.getID() == idPresc, listaPrescripciones))
+    listaPrescripciones = list(filter(lambda x: x.getID() != idPresc, listaPrescripciones))
     if (len(listaPrescripciones) == tempCantidad):
         # No cambio la lista temporal, toca buscar en la BD
         resultadoQ = EliminarPrescripcionBD(idPresc)
         if resultadoQ == 0:
-            print("No se realizó ningun cambio, compruebe los datos")
+            return "No se realizó ningun cambio, compruebe los datos"
         else:
-            generalPrescripciones = list(filter(lambda x: x.getID() == idPresc, generalPrescripciones))
+            generalPrescripciones = list(filter(lambda x: x.getID() != idPresc, generalPrescripciones))
     else:
-        generalPrescripciones = list(filter(lambda x: x.getID() == idPresc, generalPrescripciones))
+        generalPrescripciones = list(filter(lambda x: x.getID() != idPresc, generalPrescripciones))
+    return "Se eliminó exitosamente"
 
 
 def GuardarCambios():

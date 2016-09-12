@@ -61,7 +61,7 @@ def profileUser():
         elif(usuario.getPermiso() == "normal"):
             resultado = " " + usuario.getFoto().decode('utf8')
             usuarioAdentro.setFoto(resultado)
-            return render_template("usuarioAdmi.html", usuario=usuario)
+            return render_template("usuarioAdmin/usuarioNormal.html", usuario=usuario)
     else:
         if(usuarioAdentro.getPermiso() == "admin"):
             return render_template("usuarioAdmin/usuarioAdmi.html", usuario=usuarioAdentro)
@@ -109,47 +109,38 @@ def agregar():
     """Agrega,modifica y elimina los medicamentos/animales/enfermedades a las listas respectivas,
     llama a una función generica en manager, para cada opcion agregar/modi... """
     global usuarioAdentro
-    if request.files['foto'].filename == '':
-        return render_template("usuarioAdmin/usuarioAdmi.html", usuario=usuarioAdentro, suceso="No viene la foto")
-    if request.files['foto'] and allowed_file(request.files['foto'].filename):
-        opcion = request.form['submit']
-        categoria = request.form['categoria']
-        if opcion == "agregar":
-            if categoria == "Medicamento":
-                suceso = InsertarManager(Medicamento, request)
-            elif categoria == "Animal":
-                suceso = InsertarManager(Animal, request)
-            elif categoria == "Enfermedad":
-                suceso = InsertarManager(Enfermedad, request)
-            return render_template("usuarioAdmin/usuarioAdmi.html", suceso=suceso, usuario=usuarioAdentro)
-        elif opcion == "modificar":
-            if categoria == "Medicamento":
-                suceso = Modificar("Medicamento",request)
-            elif categoria == "Animal":
-                suceso = Modificar("Animal", request)
-            elif categoria == "Enfermedad":
-                suceso = Modificar("Enfermedad", request)
-            return render_template("usuarioAdmin/usuarioAdmi.html", usuario=usuarioAdentro, suceso="Se modifico: ")
-        elif opcion == "eliminar":
-            if categoria == "Medicamento":
-                suceso = Eliminar("Medicamento",request)
-            elif categoria == "Animal":
-                suceso = Eliminar("Animal", request)
-            elif categoria == "Enfermedad":
-                suceso = Eliminar("Enfermedad", request)
-            return render_template("usuarioAdmin/usuarioAdmi.html", usuario=usuarioAdentro, suceso="Se elimino: ")
-
+    opcion = request.form['submit']
+    categoria = request.form['categoria']
+    if opcion == "eliminar":
+        suceso = Eliminar(categoria, request)
+        return render_template("usuarioAdmin/usuarioAdmi.html", usuario=usuarioAdentro, suceso=suceso)
+    else:
+        if request.files['foto'].filename == '':
+            return render_template("usuarioAdmin/usuarioAdmi.html", usuario=usuarioAdentro, suceso="No viene la foto")
+        if request.files['foto'] and allowed_file(request.files['foto'].filename):
+            if opcion == "agregar":
+                if categoria == "Medicamento":
+                    suceso = InsertarManager(Medicamento, request)
+                elif categoria == "Animal":
+                    suceso = InsertarManager(Animal, request)
+                elif categoria == "Enfermedad":
+                    suceso = InsertarManager(Enfermedad, request)
+                return render_template("usuarioAdmin/usuarioAdmi.html", suceso=suceso, usuario=usuarioAdentro)
+            elif opcion == "modificar":
+                suceso = Modificar(categoria, request)
+                return render_template("usuarioAdmin/usuarioAdmi.html", usuario=usuarioAdentro, suceso=suceso)
 
 @app.route('/agregarDosis', methods=['GET', 'POST'])
 def agregarDosis():
     global usuarioAdentro
     opcion = request.form['submit']
+    suceso = "Ha ocurrido un error..."
     if opcion == "agregar":
         suceso = InsertarDosis(request)
     elif opcion == "modificar":
-        ModificarDosis(request)
+        suceso = ModificarDosis(request)
     elif opcion == "eliminar":
-        EliminarDosis(request)
+        suceso = EliminarDosis(request)
     return render_template("usuarioAdmin/usuarioAdmi.html", usuario=usuarioAdentro, suceso=suceso)
 
 
@@ -159,27 +150,33 @@ def agregarPrescripcion():
     manda por parametros los datos recolectados.
     """
     global usuarioAdentro
-
+    sigVista = ""
+    if usuarioAdentro.getPermiso() == "admin":
+        sigVista = "usuarioAdmin/usuarioAdmi.html"
+    else:
+        sigVista = "usuarioAdmin/usuarioNormal.html"
     opcion = request.form['submit']
+    suceso = "Ha ocurrido un error..."
     if "getID" != opcion:
         if opcion == "agregar":
             suceso = InsertarPrescripcion(request)
         elif opcion == "modificar":
-            ModificarPrescripcion(request)
+            suceso = ModificarPrescripcion(request)
         elif opcion == "eliminar":
-            EliminarPrescripcion(request)
-        return render_template("usuarioAdmin/usuarioAdmi.html", usuario=usuarioAdentro, suceso=suceso)
+            suceso = EliminarPrescripcion(request)
+        return render_template(sigVista, usuario=usuarioAdentro, suceso=suceso)
     else:
+        idPresc = request.form["idPrescripcion"]
         animal = request.form['animal']
         enfermedad = request.form['enfermedad']
         peso = request.form['peso']
         idDosis = ObtenerIdDosis(request)
         if idDosis != "error":
-            return render_template("usuarioAdmin/usuarioAdmi.html", usuario=usuarioAdentro,
-                               suceso="Se recupero el ID: "+idDosis[0].getID(),
+            return render_template(sigVista, usuario=usuarioAdentro,
+                               suceso="Se recupero el ID: "+str(idDosis[0].getID()), idPresc = idPresc,
                                animal=animal, enfermedad=enfermedad, peso=peso, idDosis=idDosis[0].getID())
         else:
-            return render_template("usuarioAdmin/usuarioAdmi.html", usuario=usuarioAdentro,
+            return render_template(sigVista, usuario=usuarioAdentro,
                                    suceso="¡¡ No existe en la Base de Datos !!")
 
 
@@ -215,6 +212,8 @@ def listarMedicamentos():
     global cantPagMe
     if len(listaMe) == 0:
         resultado = ObtenerAEM("Medicamento")
+        for i in resultado:
+            print(i.getNombre())
         if resultado == "error":
             return render_template("vistasDeListados/listadoMedicinas.html", data=resultado)
         if len(resultado)%10 != 0:
@@ -225,7 +224,7 @@ def listarMedicamentos():
     if len(listaMe) <= 10:
         listaTemp = []
         listaTemp.extend(listaMe)
-        listaAn.clear()
+        listaMe.clear()
         return render_template("vistasDeListados/listadoMedicinas.html", data=listaTemp, paginas=cantPagMe)
     else:
         listaPri10 = []
@@ -260,8 +259,8 @@ def listarEnfermedades():
         listaPri10.extend(listaPr[:10])
         listaResto = []
         listaResto.extend(listaPr[10:])
-        listaAn.clear()
-        listaAn.extend(listaResto)
+        listaPr.clear()
+        listaPr.extend(listaResto)
         return render_template("vistasDeListados/listadoPrescripcion.html", data=listaPri10, paginas=cantPagPr)
 
 
@@ -333,6 +332,12 @@ def listarDosis():
         lista_Do_Ge.extend(listaResto)
         return render_template("vistasDeListados/listadoDosis.html", data=listaPri10, paginas=cantPag_Do_Fi_An)
 
+@app.route('/ObtenerAEM', methods=['GET', 'POST'])
+def ObtenerInfoAEM():
+    tipo = request.args.get('tipo')
+    objeto = ObtenerDatosAEM(tipo,request.args.get('nombre'))
+    return render_template("vistasDeListados/datosAEM.html", tipo = tipo, objeto = objeto )
+
 
 @app.route('/agregarBD')
 def agregarBD():
@@ -341,7 +346,7 @@ def agregarBD():
     if (usuarioAdentro.getPermiso() == "admin"):
         return render_template("usuarioAdmin/usuarioAdmi.html", usuario=usuarioAdentro, suceso=suceso)
     elif (usuarioAdentro.getPermiso() == "normal"):
-        return render_template("usuarioAdmi.html", usuario=usuarioAdentro, suceso=suceso)
+        return render_template("usuarioAdmin/usuarioNormal.html", usuario=usuarioAdentro, suceso=suceso)
 
 #Para agregar el usuario al inicio, solo al inicio
 @app.route('/register', methods=['GET','POST'])
@@ -361,6 +366,7 @@ def register():
         filename = secure_filename(foto.filename)
     insertarUsuarioBD(usuario, contrasena, nombreCompleto, permiso, resultado)
     return render_template("login.html")
+
 
 
 # Esto lo hace correr. El debug = true permite que se impriman los errores, si se quita igual funciona

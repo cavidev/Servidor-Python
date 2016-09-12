@@ -1,0 +1,81 @@
+{% extends "usuarioAdmin/layoutAdmi.html" %}
+{% block body %}
+<div class="container" >
+    <div style="margin-top:30px;">
+        <div class="panel panel-default" style="color: lightslategrey">
+            <div class="panel-heading">
+                {% if usuario %}
+                <div class="panel-title"> Bienvenido: {{usuario.getNombre()}}</div>
+                <div style="float:right; font-size: 85%; position: relative; top:-10px"><a href="/">Salir</a></div>
+                {% endif %}
+            </div>
+            <div style="padding-top:30px" class="panel-body">
+                <div>
+                    <div style="float: left;margin-left: 20px; width: 500px" class="well well-sm">
+                        <h3 style="text-align: center;">Prescripción</h3>
+                            <form enctype="multipart/form-data" action="{{ url_for('agregarPrescripcion') }}" method="post" class="form-horizontal">
+                            <div class="form-group">
+                                <label type="text" class="col-md-3 control-label">ID</label>
+                                <div class="col-md-9">
+                                    <input type="text" class="form-control" name="idPrescripcion"  value="{{ idPresc }}" placeholder="Digite un ID">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label type="text" class="col-md-3 control-label">Usuario</label>
+                                <div class="col-md-9">
+                                    <input type="text" class="form-control" name="usuario" value="{{ usuario.getLogin() }}">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label type="text" class="col-md-3 control-label">Animal</label>
+                                <div class="col-md-9">
+                                    <input type="text" class="form-control" name="animal" value="{{ animal }}" placeholder="Nombre del animal">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label type="text" class="col-md-3 control-label">Enfermedad</label>
+                                <div class="col-md-9">
+                                    <input type="text" class="form-control" name="enfermedad" value="{{ enfermedad }}" placeholder="Digite la enfermedad">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label type="text" class="col-md-3 control-label">Peso</label>
+                                <div class="col-md-4">
+                                    <input type="text" class="form-control" name="peso" value="{{ peso }}" placeholder="Digite el peso">
+                                </div>
+                                <div class="col-md-4">
+                                    <button type="submit" name="submit" value="getID" class="btoBuscarID">ID-Dosis</button>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label type="text" class="col-md-3 control-label">Dosis</label>
+                                <div class="col-md-9">
+                                    <input type="text" class="form-control" name="idDosis" value="{{ idDosis }}" placeholder="Digite le ID de la dosis">
+                                </div>
+                            </div>
+                            <div class="form-group" style="margin-left: 130px" >
+                              <button type="submit" name="submit" value="agregar" class="btn btn-success">Agregar</button>
+                              <button type="submit" name="submit" value="modificar" class="btn btn-primary">Modificar</button>
+                              <button type="submit" name="submit" value="eliminar" class="btn btn-danger">Eliminar</button>
+                            </div>
+                            </form>
+                    </div>
+                    <div style="margin-top: 8px; margin-left: 75px;float: left; width: 500px; height: 300px" class="well well-sm">
+                        <h3 style="text-align: center;">Información</h3>
+                        <div>
+                            <div style="float: right" >
+                                <img src="{{ usuario.getFoto() }}" class="img-circle" alt="Cinque Terre" width="100" height="100">
+                            </div>
+                        </div>
+                        <div style="float: left">
+                            {% if suceso %}
+                            <label style="text-align: center" >{{ suceso }}</label>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
