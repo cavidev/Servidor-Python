@@ -328,7 +328,7 @@ def obtenerUsuarioManager(login, contrasena):
 def ObtenerAEM(filtro):
     """Retorna una lista con los animales de toda la BD,
     usa una función lambda"""
-    lista = list(filter(lambda x: x.getClase() == filtro, listaAEM))
+    lista = list(filter(lambda x: x.getClase() == filtro, generalAEM))
     if 0 < len(lista):
         return lista
     else:
