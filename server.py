@@ -59,7 +59,7 @@ def profileUser():
             #usuarioAdentro.setFotoDecodificada(resultado)
             return render_template("usuarioAdmin/usuarioAdmi.html", usuario=usuario)
         elif(usuario.getPermiso() == "normal"):
-            resultado = " " + usuario.getFoto().decode('utf8')
+            resultado = "data:image/jpeg;base64," + usuario.getFoto().decode('utf8')
             usuarioAdentro.setFoto(resultado)
             return render_template("usuarioAdmin/usuarioNormal.html", usuario=usuario)
     else:
@@ -334,13 +334,20 @@ def listarDosis():
 
 @app.route('/ObtenerAEM', methods=['GET', 'POST'])
 def ObtenerInfoAEM():
+    """"""
     tipo = request.args.get('tipo')
     objeto = ObtenerDatosAEM(tipo,request.args.get('nombre'))
-    return render_template("vistasDeListados/datosAEM.html", tipo = tipo, objeto = objeto )
+    return render_template("vistasDeListados/datosAEM.html", tipo=tipo, objeto=objeto)
 
 
 @app.route('/agregarBD')
 def agregarBD():
+    """Agrega todos los datos recolectados en las listas temporales a la base de datos
+    :parameter
+        None
+    :returns
+        El estado de la inserción en la base de datos
+    """
     global usuarioAdentro
     suceso = GuardarCambios()
     if (usuarioAdentro.getPermiso() == "admin"):
@@ -348,9 +355,16 @@ def agregarBD():
     elif (usuarioAdentro.getPermiso() == "normal"):
         return render_template("usuarioAdmin/usuarioNormal.html", usuario=usuarioAdentro, suceso=suceso)
 
+
 #Para agregar el usuario al inicio, solo al inicio
 @app.route('/register', methods=['GET','POST'])
 def register():
+    """Para agregar el usuario directamente a la base de datos, sin pasar por las restrinciones
+    :parameter
+        El request con los datos del usuario.
+    :returns
+        el estado de la insercion en la BD.
+    """
     if 'foto' not in request.files:
         return redirect(request.url)
     usuario = request.form["usuario"]
