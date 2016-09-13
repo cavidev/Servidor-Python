@@ -40,21 +40,28 @@ def AumentarContador():
 
 # Generadores
 def generadorAEM():
+    """Generador de la lista de Animales,Enfermedad/Medicina
+    devuelve una llamana en yield de lo solicitado."""
     global contador
     while True:
         yield listaAEM[contador]
 
+
 def generadorUsuarios():
+    """Usando generador, devuelve cada objeto de tipo usuario."""
     global contador
     while True:
         yield listaUsuarios[contador]
 
+
 def generadorDosis():
+    """Devuelve el obejto dosis."""
     global contador
     while True:
         yield listaDosis[contador]
 
 def generadorPrescripciones():
+    """Devuelve el objeto de las prescripciones."""
     global contador
     while True:
         yield listaPrescripciones[contador]
@@ -64,7 +71,7 @@ gUsuarios = generadorUsuarios()
 gDosis = generadorDosis()
 gPresc = generadorPrescripciones()
 
-# Ya se reviso!!
+
 def InsertarUsuario(request):
     """Verifica que un usuario no tuviera el mismo ID, if agrega un usuario nuevo
     a la lista respectiva de los usuario
@@ -91,7 +98,6 @@ def InsertarUsuario(request):
         return "¡¡ Se agrego a la lista de espera !!"
 
 
-# Ya se reviso!!
 def InsertarManager(nombreTabla, request):
     """Agrega medicamentos/animales/enfermedades al sistema,
     de forma generica hara el objeto.
@@ -198,6 +204,13 @@ def InsertarUsuarioManager1(login, password, nombre, permiso, foto):
 
 
 def Modificar(stringTabla, request):
+    """Modifica cualquiera de las 3 tablas; anim,enfe,medici.Con los atributos
+    requeridos por el usuario.
+    :parameter
+        stringTabla: nombre de la tabla a modificar
+        request: datos enviados por el usuario
+    :returns
+        El estado de la modificación."""
     nombre = request.form["nombre"]
     nuevaDesc = request.form["descripcion"]
     foto = request.files['foto']
@@ -221,6 +234,11 @@ def Modificar(stringTabla, request):
 
 
 def ModificarUsuario(request):
+    """Modifica la informacion de un usuario en la base de datos,
+    :parameter
+        request: datos enviado por los usuarios.
+    :returns
+        El estado de la modificacion"""
     usuario = request.form["usuario"]
     contra = request.form['contrasena']
     nombreCompleto = request.form['nombreCompleto']
@@ -244,6 +262,13 @@ def ModificarUsuario(request):
 
 
 def ModificarDosis(request):
+    """Modifica la dosis existentes.
+    :parameter
+        request: Datos enviados por el usuario
+    :returns
+        El estado de la modificacion.
+    """
+
     id = request.form['idDosis']
     animal = request.form['animal']
     medicamento = request.form['medicamento']
@@ -274,7 +299,13 @@ def ModificarDosis(request):
                                     if x.getID() == id else ' ', generalDosis))
     return "Modificación exitosa!"
 
+
 def ModificarPrescripcion(request):
+    """Modifica las prescripciones existentes en la base de datos.
+    :parameter
+        request: Datos enviados por los usuarios
+    :returns
+        El estado de la insercion."""
     id = request.form['idPrescripcion']
     usuario = request.form['usuario']
     animal = request.form['animal']
@@ -307,6 +338,7 @@ def ModificarPrescripcion(request):
                                     if x.getID() == id else ' ', generalPrescripciones))
     return "Modificación exitosa!"
 
+
 def obtenerUsuarioManager(login, contrasena):
     """Obtien el usuario que se esta logeando,
     Parametros:
@@ -325,7 +357,12 @@ def obtenerUsuarioManager(login, contrasena):
 
 def ObtenerAEM(filtro):
     """Retorna una lista con los animales de toda la BD,
-    usa una función lambda"""
+    usa una función lambda
+    :parameter
+        filtro: el nombre del requerimiento del cliente.
+    :returns
+        El estado del filtro, lista o el error.
+        """
     lista = list(filter(lambda x: x.getClase() == filtro, generalAEM))
     if 0 < len(lista):
         return lista
@@ -334,6 +371,11 @@ def ObtenerAEM(filtro):
 
 
 def ObtenerIdDosis(request):
+    """Obtiene le ID de una dosis especificada por el usuario.
+    :parameter
+        request: Datos solicitados por el usuario.
+    :returns
+        ID: el resultado de la busqueda."""
     animal = request.form['animal']
     enfermedad = request.form['enfermedad']
     peso = request.form['peso']
@@ -346,6 +388,12 @@ def ObtenerIdDosis(request):
 
 
 def ObtenerDosis():
+    """Retorna todas las docis que estan las lista generale osea en la BD
+    :parameter
+        None
+    :returns
+        La lista obtenida o el error.
+        """
     if len(generalDosis) > 0:
         return generalDosis
     else:
@@ -353,6 +401,12 @@ def ObtenerDosis():
 
 
 def ObtenerPrescripcion():
+    """Obtiene las prescriciones de las listas generales
+    :parameter
+        None
+    :returns
+        La lista con las prescripciones o el error
+        """
     if len(generalPrescripciones) > 0:
         return generalPrescripciones
     else:
@@ -360,6 +414,12 @@ def ObtenerPrescripcion():
 
 
 def ObternerFiltroDosis(request):
+    """Retorna la dosis por el filtro que el usuario desee, en cual viene por parametro.
+    :parameter
+        request: la solicitud del usuario.
+    :returns
+        La lista con el filtro hecho.
+        """
     pedido = request.form['pedido']
     opcion = request.form['submit']
     if "Animal" == opcion:
@@ -375,14 +435,28 @@ def ObternerFiltroDosis(request):
         else:
             return "error"
 
+
 def ObtenerDatosAEM(tipo,nombre):
+    """Obtiene el objeto con solicitado por el usuario
+    :parameter
+        tipo: tipo de dato solicitado
+        nombre: nombre del filtro a hacer.
+    :returns
+        el objeto else el estado de error."""
     lista = list(filter(lambda x: x.getClase() == tipo and x.getNombre() == nombre, generalAEM))
     if 0 < len(lista):
         return lista[0]
     else:
         return "error"
 
+
 def Eliminar(stringTabla, request):
+    """Elimina de la listas generales el objeto que le usuario envie por parametro
+     :parameter
+        stringTable: El nombre de la tabla que se desea borrar
+        request: El nombre del atributo que se quiere borrar.
+    :returns
+        El estado de la eliminacion"""
     nombreAEM = request.form["nombre"]
     global listaAEM
     global generalAEM
@@ -405,8 +479,13 @@ def Eliminar(stringTabla, request):
             generalAEM = list(filter(lambda x: not(x.getNombre() == nombreAEM and x.getClase() == stringTabla), generalAEM))
     return "Se eliminó con éxito"
 
-#no lo he hecho
+
 def EliminarUsuario(request):
+    """Elimina de la listas generales el objeto que le usuario envie por parametro
+     :parameter
+        request: El nombre del atributo que se quiere borrar.
+    :returns
+        El estado de la eliminacion"""
     usuario = request.form["usuario"]
     global listaUsuarios
     global generalUsuarios
@@ -429,6 +508,11 @@ def EliminarUsuario(request):
 
 
 def EliminarDosis(request):
+    """Elimina de la listas generales el objeto que le usuario envie por parametro
+     :parameter
+        request: El nombre del atributo que se quiere borrar.
+    :returns
+        El estado de la eliminacion"""
     idDosis = request.form['idDosis']
     global listaDosis
     global generalDosis
@@ -449,7 +533,13 @@ def EliminarDosis(request):
             generalDosis = list(filter(lambda x: x.getID() != idDosis, generalDosis))
         return "Se eliminó exitosamente"
 
+
 def EliminarPrescripcion(request):
+    """Elimina de la listas generales el objeto que le usuario envie por parametro
+     :parameter
+        request: El nombre del atributo que se quiere borrar.
+    :returns
+        El estado de la eliminacion"""
     idPresc = request.form['idPrescripcion']
     global listaPrescripciones
     global generalPrescripciones
@@ -468,6 +558,11 @@ def EliminarPrescripcion(request):
 
 
 def GuardarCambios():
+    """Guardas todos los cambios hechos en las listas a la base de datos, llama a funciones localizadas en conexion.py
+    :parameter
+        None
+    :returns
+        El estado de la insercion en la base de datos."""
     global contador
     list(map(lambda x: [InsertarBD(gAEM.__next__().getClase(), gAEM.__next__().getNombre(),
                                   gAEM.__next__().getDescripcion(), gAEM.__next__().getFoto()),

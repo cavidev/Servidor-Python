@@ -1,4 +1,4 @@
-from flask import Flask,request,render_template,jsonify,redirect, url_for # Esta siempre va en proyectos de flask
+from flask import Flask,request,render_template,jsonify,redirect, url_for
 from flask import make_response
 from werkzeug.utils import secure_filename
 from manager import *
@@ -42,6 +42,8 @@ def profileUser():
     :parameter
         nombreUsuario: Nombre del usuario
         contasena: Contraseña del usuario.
+    :returns
+        El estado del login, usuario logueado si lo logro de lo contrario
 
     """
     global usuarioAdentro
@@ -70,13 +72,19 @@ def profileUser():
 
 
 def allowed_file(filename):
-    """Verifica que el archvo subido tenga extención de imagen"""
+    """Verifica que el archvo subido tenga una extención de imagen"""
     return '.' in filename and \
            filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
 
 
 @app.route('/registerUser', methods=['GET', 'POST'])
 def registerUser():
+    """Obtiene los datos de un usuario nuevo, llama a metodos de manager
+    para guardarlos en la lista hasta que este listo para insertarse en la BD.
+    :parameter
+        datos de usuario en el request
+    :returns
+        El estado del registro, si fue o no registrado."""
     suceso = ""
     opcion = request.form["submit"]
     if opcion == "modificar":
@@ -84,22 +92,13 @@ def registerUser():
     elif opcion == "eliminar":
         suceso = EliminarUsuario(request)
     else:
-        """Obtiene los datos de un usuario nuevo, llama a metodos de manager
-        para guardarlos en la lista hasta que este listo para insertarse en la BD."""
         if 'foto' not in request.files:
             render_template("login.html", suceso="¡¡ No subio la foto !!")
-        # nombreCompleto = request.form['nombreCompleto']
-        # usuario = request.form['usuario']
-        # contrasena = request.form['contrasena']
-        # permiso = request.form['permiso']
         foto = request.files['foto']
-        # valor = base64.b64encode(foto.getvalue())
-        # resultado = valor.decode('utf8')
         if foto.filename == '':
             render_template("login.html", suceso="¡¡ No subio la foto !!")
         if foto and allowed_file(foto.filename):
              filename = secure_filename(foto.filename)
-             # InsertarUsuarioManager1(usuario, contrasena, nombreCompleto, permiso, resultado)
              suceso = InsertarUsuario(request)#Retorna lo que paso!
     return render_template("login.html", suceso=suceso)
 
@@ -107,7 +106,13 @@ def registerUser():
 @app.route('/agregar', methods=['GET', 'POST'])
 def agregar():
     """Agrega,modifica y elimina los medicamentos/animales/enfermedades a las listas respectivas,
-    llama a una función generica en manager, para cada opcion agregar/modi... """
+    llama a una función generica en manager, para cada opcion agregar/modi...
+    :parameter
+        Los datos del usuario a agregar/modificar o eliminar.
+        opcion que desea realizar y la categoria a la cual aplicar esa accion.
+    :returns
+        El estado de los sucedido, si fue agregado o eliminado.
+    """
     global usuarioAdentro
     opcion = request.form['submit']
     categoria = request.form['categoria']
@@ -130,8 +135,15 @@ def agregar():
                 suceso = Modificar(categoria, request)
                 return render_template("usuarioAdmin/usuarioAdmi.html", usuario=usuarioAdentro, suceso=suceso)
 
+
 @app.route('/agregarDosis', methods=['GET', 'POST'])
 def agregarDosis():
+    """Agrega una dosis digitada por el usuario administrador a las listas temporales de dosis
+    hace los llamados de los metodos en manager, dependiendo a lo que corresponda.
+    :parameter
+        la dosis digitada por este.
+    :returns
+        el estado de la insercion de la dosis."""
     global usuarioAdentro
     opcion = request.form['submit']
     suceso = "Ha ocurrido un error..."
@@ -147,7 +159,12 @@ def agregarDosis():
 @app.route('/agregarPrescripcion', methods=['GET', 'POST'])
 def agregarPrescripcion():
     """Hace un llamado a la funcion de agregar prescipciones en manager
-    manda por parametros los datos recolectados.
+    manda por parametros los datos recolectados. Tambien realiza la funcion de recuperara el id
+    de una dosis dada con solo el nombre del animal y su tipo.
+    :parameter
+        request: Datos enviados del usuario en un formulario.
+    :returns
+        suceso: estado de la insercion.
     """
     global usuarioAdentro
     sigVista = ""
@@ -209,6 +226,13 @@ def listarAnimales():
 
 @app.route('/listarMedicinas', methods=['GET', 'POST'])
 def listarMedicamentos():
+    """Llama a manager con la funcion que devuelve la lista con las medicinas filtradas,
+    para exponerla en el html
+    :parameter
+        None
+    :returns
+        data: Lista obtenida.
+        """
     global cantPagMe
     if len(listaMe) == 0:
         resultado = ObtenerAEM("Medicamento")
@@ -235,9 +259,14 @@ def listarMedicamentos():
         listaMe.extend(listaResto)
         return render_template("vistasDeListados/listadoMedicinas.html", data=listaPri10, paginas=cantPagMe)
 
-
+#Ojo
 @app.route('/listarPrescripciones', methods=['GET', 'POST'])
-def listarEnfermedades():
+def listarPrescripciones():
+    """Llama a manager con una funcion y Lista las prescripciones que hay en la BD
+    :parameter
+        None
+    :returns
+        Listas con las prescripciones."""
     global cantPagPr
     if len(listaPr) == 0:
         resultado = ObtenerPrescripcion()
@@ -266,6 +295,12 @@ def listarEnfermedades():
 
 @app.route('/listarDosis', methods=['GET', 'POST'])
 def listarDosis():
+    """Llama a manager a una funcion que recibe los parametros, luego los inserta en las listas de
+    Dosis temporales
+    :parameter
+        request: datos insertados por los usuarios
+    :returns
+        suceso: Estado de la insercion """
     global cantPag_Do_Fi_An
     global filtroActivo
     if request.method == 'POST':
@@ -332,11 +367,19 @@ def listarDosis():
         lista_Do_Ge.extend(listaResto)
         return render_template("vistasDeListados/listadoDosis.html", data=listaPri10, paginas=cantPag_Do_Fi_An)
 
+
 @app.route('/ObtenerAEM', methods=['GET', 'POST'])
 def ObtenerInfoAEM():
-    """"""
+    """Llama a managern el cual devuelve una lista con el tipo de datos especificado
+    ya sea animales/medicinas etc
+    :parameter
+        request: Los datos pedidos por los usuario
+    :returns
+        objeto: el objeto recuperado de manager
+        tipo: tipo de dato que se evaluo.
+    """
     tipo = request.args.get('tipo')
-    objeto = ObtenerDatosAEM(tipo,request.args.get('nombre'))
+    objeto = ObtenerDatosAEM(tipo, request.args.get('nombre'))
     return render_template("vistasDeListados/datosAEM.html", tipo=tipo, objeto=objeto)
 
 

@@ -26,6 +26,12 @@ cursor.close()
 conexion_mysql.close()
 
 def EjecutarQuery(query,args):
+    """Realiza la ejecucuión de la query enviada por parametro.
+    :parameter
+        query: consulta a realizar en la BD
+        args: datos a consultar
+    :returns
+        la consulta hecha en una tupla"""
     error = "Exito!"
     try:
         conexion_mysql = mysql.connector.connect(**config_mysql)
@@ -42,6 +48,13 @@ def EjecutarQuery(query,args):
 
 
 def listar(nombreTabla):
+    """Trae los datos de la BD y los guarda en los objetos respectivos, para luego
+    agregarlos a una lista de los objetos especificados.
+    :parameter
+        nombreTabla: Nombre de la tabla en la BD
+    :returns
+        La lista con los objetos creados
+    """
     conexion_mysql = mysql.connector.connect(**config_mysql)
     cursor = conexion_mysql.cursor()
     cursor.execute("Select * from "+ nombreTabla().getClase())
@@ -60,6 +73,13 @@ def listar(nombreTabla):
 
 
 def listarDosis():
+    """Lista las dosis, trae la información de la BD y las agrega a un objeto dosis
+    para luego agregarselas a una lista especifica.
+    :parameter
+        None
+    :returns
+        La lista llena de objetos disis.
+    """
     conexion_mysql = mysql.connector.connect(**config_mysql)
     cursor = conexion_mysql.cursor()
     cursor.execute("Select * from Dosis")
@@ -79,6 +99,12 @@ def listarDosis():
 
 
 def listarPrescripciones():
+    """Trae las prescripciones de la BD las agrega a un objeto y las inserta en una lista respectiva
+    :parameter
+        None
+    :returns
+        La lista con las prescripciones hechas.
+    """
     conexion_mysql = mysql.connector.connect(**config_mysql)
     cursor = conexion_mysql.cursor()
     cursor.execute("Select * from Prescripcion")
@@ -98,6 +124,12 @@ def listarPrescripciones():
 
 
 def obtenerUsuarioBD():
+    """Obtiene los usuarios de la BD y los enlista para luego ser retornados
+    :parameter
+        None
+    :returns
+        La lista con los usuario recuperados.
+    """
     conexion_mysql = mysql.connector.connect(**config_mysql)
     cursor = conexion_mysql.cursor()
     cursor.execute("Select * from usuario")
@@ -116,6 +148,15 @@ def obtenerUsuarioBD():
 
 
 def InsertarBD(nombreTabla,nombre,descripcion,foto):
+    """Inserta en las tablas respectivas la informacion enviada por el usuario
+    :parameter
+        nombreTabla: El nombre de la tabla insertar
+        nombre: el nombre del respectivo registro
+        descripcion: la descripcion del respectivo registro
+        foto: del respectivo regitro
+    :returns
+        El estado de la inserción
+    """
     query = ""
     if (nombreTabla == "Animal"):
         query = "Insert into Animal "
@@ -129,6 +170,16 @@ def InsertarBD(nombreTabla,nombre,descripcion,foto):
 
 
 def insertarUsuarioBD(login, contrasena, nombre, permiso, foto):
+    """Inserta en la tabla de Usuarios un usuario respectivo
+    :parameter
+        login: nombre de usuario de la persona
+        contrasena: la llave que le permite la entrada al sistema
+        nombre: de la persona a registrar
+        permiso: tipo de entrada al sistema
+        foto: la foto de la persona a registrar
+    :returns
+        El estado de la inserción en la BD
+    """
     #prepare update query and data
     query = "INSERT INTO usuario(login, contrasena, nombre, permiso, foto)VALUES(%s,%s,%s,%s,%s)"
     args = (login, contrasena, nombre, permiso,foto)
@@ -136,18 +187,49 @@ def insertarUsuarioBD(login, contrasena, nombre, permiso, foto):
 
 
 def InsertarDosisBD(id,animal,medicamento,enfermedad,minPeso,maxPeso,dosis):
+    """Inserta en la tabla de las dosis
+    :parameter
+        id: el id respectivo
+        animal: nombre del animal que va dirigida la dosis
+        medicamento: el medicamento que se recomienda
+        enfermedad: lo que padese el animal
+        minPeso: al que va dirigido la dosis
+        dosis: lo recomendado.
+    :returns
+        el estado de la inserción
+    """
     query = "Insert into Dosis VALUES (%s, %s, %s, %s, %s, %s, %s) "
     args = (id,animal,medicamento,enfermedad,minPeso,maxPeso,dosis)
     return EjecutarQuery(query, args)
 
 
 def InsertarPrescripcionBD(id,usuario,animal,enfermedad,peso,idDosis):
+    """Inserta en la base de datos la prescripcion para cada animal
+    :parameter
+        id: respectivo de la prescripcion
+        usuario: nombre del usuario que hizo la prescripcion
+        animal: al que va dirigido la prescripcion
+        enfermedad: la que posee el animal
+        peso: del animal
+        idDosis: id de la dosis recomendada
+    :returns
+        El estado de la inserción en la BD.
+    """
     query = "Insert into Prescripcion VALUES (%s, %s, %s, %s, %s, %s) "
     args = (id,usuario,animal,enfermedad,peso,idDosis)
     return EjecutarQuery(query, args)
 
 
 def ModificarBD(nombretabla,nuevaDesc, nuevaFoto,nombre):
+    """Modifica los registros en la BD correspondiente.
+    :parameter
+        nombreTabla: el nombre de la tabla a modificar
+        nuevaDesc: la nueva descripcion
+        nuevaFoto: nueva foto a agregar
+        nombre: la llave primaria
+    :returns
+        el estado de la modificación
+        """
     query = ""
     if (nombretabla == "Animal"):
         query = "update Animal "
