@@ -26,7 +26,6 @@ cursor.close()
 conexion_mysql.close()
 
 def EjecutarQuery(query,args):
-    print(query)
     error = "Exito!"
     try:
         conexion_mysql = mysql.connector.connect(**config_mysql)
@@ -39,7 +38,6 @@ def EjecutarQuery(query,args):
     finally:
         cursor.close()
         conexion_mysql.close()
-    print(error)
     return error
 
 
