@@ -346,9 +346,8 @@ def obtenerUsuarioManager(login, contrasena):
         contrasena: La contraseña del usuario.
     Returns:
         Usuario if encuentra else estado de la busqueda."""
-    listaUsuario = obtenerUsuarioBD()
     listaGenerada = list(
-        filter(lambda x: x.getLogin() == login and x.getPassword() == contrasena, listaUsuario))
+        filter(lambda x: x.getLogin() == login and x.getPassword() == contrasena, generalUsuarios))
     if 0 < len(listaGenerada):
         return listaGenerada[0]
     else:

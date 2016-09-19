@@ -56,12 +56,18 @@ def profileUser():
         if usuario == "error":
             return render_template("login.html", suceso="¡¡ No existe ese usuario !!")
         elif(usuario.getPermiso() == "admin"):
-            resultado = "data:image/jpeg;base64," + usuario.getFoto().decode('utf8')
+            if (type(usuario.getFoto()) == str):
+                resultado = "data:image/jpeg;base64," + usuario.getFoto()
+            else:
+                resultado = "data:image/jpeg;base64," + usuario.getFoto().decode('utf8')
             usuarioAdentro.setFoto(resultado)
             #usuarioAdentro.setFotoDecodificada(resultado)
             return render_template("usuarioAdmin/usuarioAdmi.html", usuario=usuario)
         elif(usuario.getPermiso() == "normal"):
-            resultado = "data:image/jpeg;base64," + usuario.getFoto().decode('utf8')
+            if (type(usuario.getFoto()) == str):
+                resultado = "data:image/jpeg;base64," + usuario.getFoto()
+            else:
+                resultado = "data:image/jpeg;base64," + usuario.getFoto().decode('utf8')
             usuarioAdentro.setFoto(resultado)
             return render_template("usuarioAdmin/usuarioNormal.html", usuario=usuario)
     else:
