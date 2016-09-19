@@ -9,11 +9,15 @@ listaUsuarios = []
 listaDosis = []
 listaPrescripciones = []
 
-def LimpiarListasLocales():
+def LimpiarListas():
     listaAEM.clear()
     listaUsuarios.clear()
     listaDosis.clear()
     listaPrescripciones.clear()
+    generalAEM.clear()
+    generalUsuarios.clear()
+    generalDosis.clear()
+    generalPrescripciones.clear()
 
 # Listas Generales
 generalAEM = []
@@ -140,8 +144,6 @@ def InsertarDosis(request):
         medicamento = request.form['medicamento']
         enfermedad = request.form['enfermedad']
         #verifica lambda
-        for item in generalAEM:
-            print(item.getNombre())
         tempLista = list(filter(lambda x: (x.getClase() == "Animal" and x.getNombre() == animal) or
                                           (x.getClase() == "Medicamento" and x.getNombre() == medicamento) or
                                           (x.getClase() == "Enfermedad" and x.getNombre() == enfermedad)
@@ -331,7 +333,7 @@ def ModificarPrescripcion(request):
         else:
             resultadoQ = ModificarPrescripcionBD(usuario, animal, enfermedad,peso, idDosis, id)
             if resultadoQ == 0:
-                print("No se encontró el elemento solicitado")
+                return "No se encontró el elemento solicitado"
             else:
                 list(map(lambda x: [x.setUsuario(usuario), x.setAnimal(animal), x.setEnfermedad(enfermedad),
                                     x.setPeso(peso), x.setDosis(idDosis)]
@@ -581,6 +583,6 @@ def GuardarCambios():
                                               gPresc.__next__().getPeso(), gPresc.__next__().getDosis()), AumentarContador()],
                                               range(len(listaPrescripciones))))
     contador = 0
+    LimpiarListas()
     CargarListasGenerales()
-    LimpiarListasLocales()
     return "¡¡ Se han guardado todos los cambios!! "

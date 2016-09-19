@@ -242,8 +242,6 @@ def listarMedicamentos():
     global cantPagMe
     if len(listaMe) == 0:
         resultado = ObtenerAEM("Medicamento")
-        for i in resultado:
-            print(i.getNombre())
         if resultado == "error":
             return render_template("vistasDeListados/listadoMedicinas.html", data=resultado)
         if len(resultado)%10 != 0:
@@ -278,7 +276,6 @@ def listarPrescripciones():
         resultado = ObtenerPrescripcion()
         if resultado == "error":
             return render_template("vistasDeListados/listadoPrescripcion.html", data=resultado)
-        print(resultado)
         if len(resultado) % 10 != 0:
             cantPagPr = (len(resultado) // 10) + 2
         else:
@@ -311,8 +308,6 @@ def listarDosis():
     global filtroActivo
     if request.method == 'POST':
         resultado = ObternerFiltroDosis(request)
-        print("Server")
-        print(resultado)
         if resultado == "error":
             return render_template("vistasDeListados/listadoDosis.html", data=resultado)
         if len(resultado) % 10 != 0:
