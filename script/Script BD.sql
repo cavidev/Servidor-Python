@@ -40,7 +40,7 @@ create table Dosis(
     enfermedad			varchar(20),
     minPeso				int,
     maxPeso				int,
-    dosis				int,
+    dosis 				int,
     CONSTRAINT pk_idDosis PRIMARY KEY (id),
     CONSTRAINT fk_Dosis_animal FOREIGN KEY (animal)
 	REFERENCES Animal(nombre),
@@ -68,9 +68,17 @@ create table Prescripcion(
 	REFERENCES Dosis(id)
 );
 
-insert into usuario(login,contrasena,nombre,permiso)
-Values("Carlos","12345","Carlos Villafuerte","admin")
+
+insert into Usuario values ("Blanco707","12345","Esteban Blanco","admin","qwsdsad");
 select * from Usuario
-delete from usuario
-DELETE FROM `veterinariaeyc`.`usuario`
-WHERE <{where_expression}>;
+
+insert into Animal values ("Perro","Ladra","asddsasdsd");
+insert into Animal values ("Gato","Maulla","asddsasdsd");
+insert into Enfermedad values ("Sarna","Feo","asddsasdsd");
+insert into Medicamento values ("Tinta Violeta","Spray","asddsasdsd");
+insert into Medicamento values ("m66","Spray","asddsasdsd");
+insert into Dosis values(1,"Perro","Tinta Violeta","Sarna",2,10,20);
+insert into Dosis values(2,"Gato","Tinta Violeta","Sarna",1,10,5);
+insert into Dosis values(3,"Gato","Tinta Violeta","Sarna",1,10,5);
+
+insert into Prescripcion values(1,"Blanco707","Perro","Sarna",5,1)

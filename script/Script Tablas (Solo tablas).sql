@@ -1,45 +1,46 @@
-create database veterinarioEYC;
+create database veterinariaEYC;
 
-use veterinarioEYC;
+use veterinariaEYC;
 
 create table Usuario
 (
-	  login 		varchar(20),
+	login 		varchar(20),
     contrasena 		varchar(20),
-    nombre		varchar(20),
+    nombre		varchar(40),
     permiso 	varchar(20),
     foto 		longblob,
     CONSTRAINT pk_login PRIMARY KEY (login)
 );
 
 create table Medicamento(
-	  nombre		varchar(20),
+	nombre		varchar(30),
     descripcion 	varchar(100),
     foto 		longblob,
     CONSTRAINT pk_nombreMed PRIMARY KEY (nombre)
 );
 
 create table Animal(
-	  nombre		varchar(20),
+	nombre		varchar(20),
     descripcion 	varchar(100),
     foto 		longblob,
     CONSTRAINT pk_nombreA PRIMARY KEY (nombre)
 );
 
 create table Enfermedad(
-	  nombre		varchar(20),
+	nombre		varchar(20),
     descripcion 	varchar(100),
     foto 		longblob,
     CONSTRAINT pk_nombreE PRIMARY KEY (nombre)
 );
 
 create table Dosis(
-	  id					int,
-	  animal				varchar(20),
+	id					int,
+	animal				varchar(20),
     medicamento			varchar(20),
     enfermedad			varchar(20),
-    peso				int,
-    dosis				int,
+    minPeso				int,
+    maxPeso				int,
+    dosis 				int,
     CONSTRAINT pk_idDosis PRIMARY KEY (id),
     CONSTRAINT fk_Dosis_animal FOREIGN KEY (animal)
 	REFERENCES Animal(nombre),
@@ -50,9 +51,9 @@ create table Dosis(
 );
 
 create table Prescripcion(
-	  id					int,
+	id					int,
     usuario				varchar(20),
-	  animal				varchar(20),
+	animal				varchar(20),
     enfermedad			varchar(20),
     peso				int,
     idDosis				int,
